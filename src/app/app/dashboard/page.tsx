@@ -1,8 +1,28 @@
-export default function DashboardPage() {
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth/session";
+import { createSessionClient } from "@/lib/supabase/server";
+import { DashboardView } from "@/components/dashboard/dashboard-view";
+import type { Activity, AppUser } from "@/types/database";
+
+export default async function DashboardPage() {
+  const session = await getSession();
+  if (!session) redirect("/login");
+
+  const supabase = await createSessionClient();
+
+  const [{ data: activities, error: activitiesError }, { data: users, error: usersError }] =
+    await Promise.all([
+      supabase.from("activities").select("*"),
+      supabase.from("users").select("*").eq("active", true).order("name"),
+    ]);
+
+  const hasError = Boolean(activitiesError || usersError);
+
   return (
-    <div>
-      <h1 className="text-xl font-semibold text-foreground">Dashboard</h1>
-      <p className="text-sm text-muted-foreground">Implementado na Fase 3.</p>
-    </div>
+    <DashboardView
+      activities={(activities ?? []) as Activity[]}
+      users={(users ?? []) as AppUser[]}
+      loadError={hasError}
+    />
   );
 }
