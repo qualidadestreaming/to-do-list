@@ -138,6 +138,58 @@
       "sessionExpired": "Sessão expirada. Faça login novamente."
     }
   },
+  "admin": {
+    "title": "Administração",
+    "tabs": {
+      "users": "Usuários",
+      "password": "Senha do departamento",
+      "newDepartment": "Novo departamento"
+    },
+    "users": {
+      "newUser": "Novo usuário",
+      "name": "Nome",
+      "role": "Papel",
+      "roleColaborador": "Colaborador",
+      "roleGestor": "Gestor",
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "edit": "Editar",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "create": "Criar usuário",
+      "createdToast": "Usuário criado.",
+      "updatedToast": "Usuário atualizado.",
+      "noUsers": "Nenhum usuário cadastrado ainda."
+    },
+    "password": {
+      "title": "Trocar senha do departamento",
+      "description": "Essa senha é usada por todos os colaboradores do departamento para fazer login.",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirmar nova senha",
+      "save": "Salvar nova senha",
+      "successToast": "Senha do departamento atualizada."
+    },
+    "newDepartment": {
+      "title": "Cadastrar novo departamento",
+      "description": "Cria um novo departamento com seu próprio login e primeiro gestor.",
+      "name": "Nome do departamento",
+      "slug": "Identificador (usado no login)",
+      "slugHelp": "Gerado automaticamente a partir do nome — pode editar.",
+      "password": "Senha inicial",
+      "managerName": "Nome do primeiro gestor",
+      "create": "Criar departamento",
+      "successToast": "Departamento criado."
+    },
+    "errors": {
+      "forbidden": "Só o gestor do departamento pode acessar esta área.",
+      "sessionExpired": "Sessão expirada. Faça login novamente.",
+      "createUserFailed": "Não foi possível criar o usuário.",
+      "updateUserFailed": "Não foi possível salvar as alterações do usuário.",
+      "changePasswordFailed": "Não foi possível trocar a senha agora.",
+      "createDepartmentFailed": "Não foi possível criar o departamento.",
+      "slugTaken": "Esse identificador já está em uso — escolha outro."
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "filters": {

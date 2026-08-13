@@ -138,6 +138,58 @@
       "sessionExpired": "会话已过期，请重新登录。"
     }
   },
+  "admin": {
+    "title": "管理",
+    "tabs": {
+      "users": "用户",
+      "password": "部门密码",
+      "newDepartment": "新建部门"
+    },
+    "users": {
+      "newUser": "新建用户",
+      "name": "姓名",
+      "role": "角色",
+      "roleColaborador": "协作者",
+      "roleGestor": "经理",
+      "active": "启用",
+      "inactive": "停用",
+      "edit": "编辑",
+      "save": "保存",
+      "cancel": "取消",
+      "create": "创建用户",
+      "createdToast": "用户已创建。",
+      "updatedToast": "用户已更新。",
+      "noUsers": "尚未注册任何用户。"
+    },
+    "password": {
+      "title": "修改部门密码",
+      "description": "该密码供部门内所有协作者登录使用。",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "save": "保存新密码",
+      "successToast": "部门密码已更新。"
+    },
+    "newDepartment": {
+      "title": "注册新部门",
+      "description": "创建一个拥有独立登录和首位经理的新部门。",
+      "name": "部门名称",
+      "slug": "标识符（登录时使用）",
+      "slugHelp": "根据名称自动生成——可编辑。",
+      "password": "初始密码",
+      "managerName": "首位经理姓名",
+      "create": "创建部门",
+      "successToast": "部门已创建。"
+    },
+    "errors": {
+      "forbidden": "只有部门经理可以访问此区域。",
+      "sessionExpired": "会话已过期，请重新登录。",
+      "createUserFailed": "无法创建用户。",
+      "updateUserFailed": "无法保存用户的更改。",
+      "changePasswordFailed": "目前无法更改密码。",
+      "createDepartmentFailed": "无法创建部门。",
+      "slugTaken": "该标识符已被使用，请选择其他标识符。"
+    }
+  },
   "dashboard": {
     "title": "仪表盘",
     "filters": {

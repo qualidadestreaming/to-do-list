@@ -6,7 +6,11 @@
 
 TDL Multilaser é a substituição de uma planilha Excel ("To Do List") usada hoje pelo time de **Qualidade** do Grupo Multilaser para gerenciar atividades prioritárias, com Matriz GUT (Gravidade × Urgência × Tendência). Vira um sistema web multi-departamento: hoje só existe o departamento Qualidade, mas o produto é desenhado para receber outros departamentos no futuro (Fase 6).
 
-Construído em fases. O usuário pediu explicitamente, numa rodada (2026-08-13), para eu avançar por várias fases seguidas sem parar para aprovação a cada uma — decisões ambíguas encontradas no caminho foram registradas aqui (seção "Pendências") em vez de travar o trabalho. Isso não é a regra padrão de trabalho dele (normalmente ele aprova fase a fase) — só valeu para essa rodada específica; ao retomar o projeto, resuma o que foi feito e pergunte antes de seguir para fases NOVAS que ainda não tinham sido abertas nessa rodada.
+Construído em fases. O usuário pediu explicitamente, numa rodada (2026-08-13), para eu avançar por várias fases seguidas sem parar para aprovação a cada uma — decisões ambíguas encontradas no caminho foram registradas aqui (seção "Pendências") em vez de travar o trabalho. Isso não é a regra padrão de trabalho dele (normalmente ele aprova fase a fase) — só valeu para essa rodada específica; ao retomar o projeto, resuma o que foi feito e pergunte antes de seguir além do que já está aqui (ex: novas telas, novos requisitos).
+
+## Estado atual (resumo pra retomar rápido)
+
+**As 6 fases do roadmap original estão implementadas** (código completo, `npm run build` limpo). **O que falta não é código, é infraestrutura que só o usuário pode prover**: um projeto Supabase real (hoje `.env.local` tem só placeholder) e resolver o acesso de push no GitHub. Sem o Supabase real, **nenhuma tela que depende de dado (Atividades/Dashboard/Admin) foi testada de ponta a ponta** — só a tela de Login foi de fato exercitada no preview (troca de idioma/tema confirmadas funcionando). Antes de considerar o projeto "pronto", depois que o usuário passar as credenciais do Supabase: rodar `supabase/schema.sql` no projeto novo, seedar o departamento "Qualidade" + os 20 usuários (manualmente ou construindo um seed SQL), testar o login de verdade, testar CRUD de atividade, testar o dashboard com dado real, e só então rodar `scripts/migrate-spreadsheet.mjs --commit`.
 
 ## Stack
 
@@ -93,7 +97,17 @@ Requisito do prompt original: troca de idioma **sem reload forçado**. Isso desc
 - [x] **Fase 3 — Dashboard**: KPIs, gráfico de distribuição por status (donut), gráfico por faixa GUT (barras), ranking de performance por responsável (barras empilhadas), filtros por responsável/status/prioridade/período.
 - [x] **Fase 4 — i18n e polish visual**: PT/EN/ZH completos nas telas construídas até agora (Login, Topbar/Nav, Atividades, Dashboard), troca em tempo real sem reload (confirmado no preview), tema claro/escuro testado (contraste ok nos dois), responsividade sem overflow horizontal testada em mobile (375px) na tela de Login.
 - [x] **Fase 5 — Migração de dados**: script `scripts/migrate-spreadsheet.mjs` escrito e testado em dry-run contra o arquivo real do usuário. Ver seção própria abaixo — **ainda não rodado com `--commit`** (precisa do Supabase real existir e do departamento/usuários já seedados primeiro).
-- [ ] **Fase 6 — Administração e expansão**: painel de gestor (`/app/admin`) ainda é um stub estático.
+- [x] **Fase 6 — Administração e expansão**: painel `/app/admin` (só `gestor`, já gated desde a Fase 1 na nav e de novo na própria página) com 3 abas — Usuários (criar/editar/ativar-desativar, escopado ao próprio departamento via RLS), Senha do departamento (RPC `set_department_password`, já existia desde o schema da Fase 0), Novo departamento (RPC nova `create_department`, ver abaixo).
+
+## Fase 6 — Painel de administração
+
+`/app/admin` (Server Component, gate duplo: já escondido da nav pra quem não é `gestor` desde a Fase 1, e a própria página redireciona pra `/app/dashboard` se um `colaborador` acessar a URL direto).
+
+- **Aba Usuários**: criar/editar (nome, papel, ativo/inativo) — tudo escopado ao próprio departamento da sessão via RLS (`users_insert`/`users_update` já exigiam `is_gestor()` desde o schema da Fase 0, nada novo aqui). Não existe "excluir usuário" — só desativar (`active=false`), decisão implícita por analogia com o resto do sistema (nunca foi pedido exclusão física, e desativar preserva a autoria de atividades/follow-ups já criados por essa pessoa, que têm FK pra `users`).
+- **Aba Senha do departamento**: usa a RPC `set_department_password` que já existia desde o schema original (Fase 0) — só faltava a UI.
+- **Aba Novo departamento**: RPC nova `create_department(name, slug, password, manager_name)` (`security definer`, checa `is_gestor()` internamente) — cria o departamento E o primeiro usuário (`role='gestor'`) atomicamente. **Decisão de leitura do prompt, não 100% inequívoca**: o prompt original diz literalmente "área de administração (gestor) para cadastrar departamentos" sem prever um papel de "super-admin" da plataforma separado do `gestor` de cada departamento — então **qualquer gestor, de qualquer departamento, pode criar um departamento novo** (a RPC só checa `is_gestor()`, não checa a QUE departamento esse gestor pertence). Se o usuário quiser restringir isso a uma pessoa específica/papel mais alto no futuro, é uma migration nova adicionando esse conceito (hoje não existe no modelo de dados).
+- Slug do novo departamento é gerado automaticamente do nome (`slugify()`, `new-department-tab.tsx`) mas o campo continua editável — usuário pode ajustar antes de criar.
+- **Não implementado, fora do escopo literal do prompt**: exclusão de departamento, transferência de gestor entre departamentos, exclusão física de usuário. Nenhum desses foi pedido explicitamente.
 
 ## Fase 5 — Script de migração (`scripts/migrate-spreadsheet.mjs`)
 
@@ -141,3 +155,4 @@ Lê a planilha original, classifica cada linha (finalizada / ativa / ambígua), 
 - `src/types/database.ts` — tipos manuais espelhando o schema (regenerar via `supabase gen types` assim que o projeto existir). **Atenção**: os tipos de linha (`Department`, `AppUser`, `Activity`, `ActivityFollowUp`) precisam ser `type`, nunca `interface` — ver comentário no topo do arquivo (interfaces não satisfazem o `Record<string, unknown>` que o supabase-js exige para `.rpc()`/`.from()` não colapsar em `never`; bug real que já aconteceu e foi corrigido nesta sessão).
 - `.env.local.example` — todas as variáveis de ambiente necessárias, com onde encontrar cada uma no painel do Supabase. `.env.local` (gitignored) tem valores placeholder pra build/dev não quebrarem sem projeto real.
 - `scripts/migrate-spreadsheet.mjs` — migração da planilha (Fase 5), dry-run por padrão. Lê `.env.local` manualmente (não passa pelo Next.js).
+- `src/components/admin/` / `src/lib/actions/admin-actions.ts` — painel de administração (Fase 6): usuários, senha do departamento, novo departamento.

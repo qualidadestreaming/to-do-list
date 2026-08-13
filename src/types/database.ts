@@ -77,6 +77,10 @@ export interface Database {
         Args: { p_department_id: string; p_new_password: string };
         Returns: undefined;
       };
+      create_department: {
+        Args: { p_name: string; p_slug: string; p_password: string; p_manager_name: string };
+        Returns: { department_id: string; department_name: string }[];
+      };
     };
     Tables: {
       departments: {

@@ -1,14 +1,16 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
+import { createSessionClient } from "@/lib/supabase/server";
+import { AdminView } from "@/components/admin/admin-view";
+import type { AppUser } from "@/types/database";
 
 export default async function AdminPage() {
   const session = await getSession();
-  if (session?.userRole !== "gestor") redirect("/app/dashboard");
+  if (!session) redirect("/login");
+  if (session.userRole !== "gestor") redirect("/app/dashboard");
 
-  return (
-    <div>
-      <h1 className="text-xl font-semibold text-foreground">Administração</h1>
-      <p className="text-sm text-muted-foreground">Implementado na Fase 6.</p>
-    </div>
-  );
+  const supabase = await createSessionClient();
+  const { data: users } = await supabase.from("users").select("*").order("name");
+
+  return <AdminView users={(users ?? []) as AppUser[]} />;
 }

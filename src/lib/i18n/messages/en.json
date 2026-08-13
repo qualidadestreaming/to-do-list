@@ -138,6 +138,58 @@
       "sessionExpired": "Session expired. Please log in again."
     }
   },
+  "admin": {
+    "title": "Administration",
+    "tabs": {
+      "users": "Users",
+      "password": "Department password",
+      "newDepartment": "New department"
+    },
+    "users": {
+      "newUser": "New user",
+      "name": "Name",
+      "role": "Role",
+      "roleColaborador": "Collaborator",
+      "roleGestor": "Manager",
+      "active": "Active",
+      "inactive": "Inactive",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "create": "Create user",
+      "createdToast": "User created.",
+      "updatedToast": "User updated.",
+      "noUsers": "No user registered yet."
+    },
+    "password": {
+      "title": "Change department password",
+      "description": "This password is used by every collaborator in the department to log in.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "save": "Save new password",
+      "successToast": "Department password updated."
+    },
+    "newDepartment": {
+      "title": "Register a new department",
+      "description": "Creates a new department with its own login and first manager.",
+      "name": "Department name",
+      "slug": "Identifier (used at login)",
+      "slugHelp": "Auto-generated from the name — editable.",
+      "password": "Initial password",
+      "managerName": "First manager's name",
+      "create": "Create department",
+      "successToast": "Department created."
+    },
+    "errors": {
+      "forbidden": "Only the department manager can access this area.",
+      "sessionExpired": "Session expired. Please log in again.",
+      "createUserFailed": "Could not create the user.",
+      "updateUserFailed": "Could not save the user's changes.",
+      "changePasswordFailed": "Could not change the password right now.",
+      "createDepartmentFailed": "Could not create the department.",
+      "slugTaken": "That identifier is already in use — choose another one."
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "filters": {

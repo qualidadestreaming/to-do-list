@@ -210,6 +210,41 @@ begin
 end;
 $$;
 
+-- Criação de um NOVO departamento (ex: além de "Qualidade"). Bypassa RLS de
+-- propósito — não há policy de insert em `departments` para o client (só
+-- este caminho elevado pode criar). Qualquer gestor (de qualquer
+-- departamento) pode chamar — o prompt original pede explicitamente "área
+-- de administração (gestor) para cadastrar departamentos", sem prever um
+-- papel de "super-admin" plataforma à parte; essa é a leitura adotada.
+create or replace function create_department(
+  p_name text,
+  p_slug text,
+  p_password text,
+  p_manager_name text
+)
+returns table (department_id uuid, department_name text)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_department_id uuid;
+begin
+  if not is_gestor() then
+    raise exception 'FORBIDDEN';
+  end if;
+
+  insert into departments (name, slug, password_hash)
+  values (p_name, p_slug, crypt(p_password, gen_salt('bf')))
+  returning id into v_department_id;
+
+  insert into users (department_id, name, role)
+  values (v_department_id, p_manager_name, 'gestor');
+
+  return query select v_department_id, p_name;
+end;
+$$;
+
 -- -----------------------------------------------------------------------------
 -- 6. ROW LEVEL SECURITY
 -- -----------------------------------------------------------------------------
