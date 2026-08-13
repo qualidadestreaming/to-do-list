@@ -1,26 +1,200 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Marca Grupo Multilaser — tokens fixos, não mudam entre temas */
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-purple-dark: var(--brand-purple-dark);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-light: var(--brand-blue-light);
+
+  /* Faixas de criticidade da Matriz GUT */
+  --color-gut-low: var(--gut-low);
+  --color-gut-low-foreground: var(--gut-low-foreground);
+  --color-gut-medium: var(--gut-medium);
+  --color-gut-medium-foreground: var(--gut-medium-foreground);
+  --color-gut-high: var(--gut-high);
+  --color-gut-high-foreground: var(--gut-high-foreground);
+
+  /* Status de atividade */
+  --color-status-ready: var(--status-ready);
+  --color-status-ready-foreground: var(--status-ready-foreground);
+  --color-status-ongoing: var(--status-ongoing);
+  --color-status-ongoing-foreground: var(--status-ongoing-foreground);
+  --color-status-closed: var(--status-closed);
+  --color-status-closed-foreground: var(--status-closed-foreground);
+  --color-status-overdue: var(--status-overdue);
+  --color-status-overdue-foreground: var(--status-overdue-foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* Fonte oficial: Arial. Não é hospedada via next/font/google (Google Fonts não
+     distribui Arial) — usamos a pilha de fontes do sistema operacional, que
+     entrega Arial de verdade no Windows/macOS sem custo de carregamento. */
+  --font-sans: Arial, "Helvetica Neue", Helvetica, -apple-system,
+    "Segoe UI", sans-serif;
+
+  /* Identidade visual oficial Grupo Multilaser (fixa, não varia com o tema) */
+  --brand-purple: #5000bf;
+  --brand-purple-dark: #3a008c;
+  --brand-blue: #004edb;
+  --brand-blue-light: #4691ff;
+
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #f2f2f5;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: var(--brand-purple);
+  --primary-foreground: #ffffff;
+  --secondary: #f2f2f5;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f2f2f5;
+  --muted-foreground: #5b5b66;
+  --accent: var(--brand-blue);
+  --accent-foreground: #ffffff;
+  --destructive: #c0362c;
+  --border: #e2e2e8;
+  --input: #e2e2e8;
+  --ring: var(--brand-purple);
+  --chart-1: var(--brand-purple);
+  --chart-2: var(--brand-blue);
+  --chart-3: var(--brand-blue-light);
+  --chart-4: #8a5fd6;
+  --chart-5: #b8b8c2;
+  --radius: 0.625rem;
+
+  --sidebar: var(--brand-purple);
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: var(--brand-purple);
+  --sidebar-accent: var(--brand-purple-dark);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: var(--brand-purple-dark);
+  --sidebar-ring: var(--brand-blue-light);
+
+  --gut-low: #e3f5e9;
+  --gut-low-foreground: #1e7a42;
+  --gut-medium: #fdf1d6;
+  --gut-medium-foreground: #92650a;
+  --gut-high: #fbe2e1;
+  --gut-high-foreground: #b3261e;
+
+  --status-ready: #eceef5;
+  --status-ready-foreground: #3b3f52;
+  --status-ongoing: #e3ecff;
+  --status-ongoing-foreground: var(--brand-blue);
+  --status-closed: #e3f5e9;
+  --status-closed-foreground: #1e7a42;
+  --status-overdue: #fbe2e1;
+  --status-overdue-foreground: #b3261e;
+}
+
+.dark {
+  --background: #121214;
+  --foreground: #f2f2f5;
+  --card: #1c1c20;
+  --card-foreground: #f2f2f5;
+  --popover: #1c1c20;
+  --popover-foreground: #f2f2f5;
+  --primary: var(--brand-blue-light);
+  --primary-foreground: #121214;
+  --secondary: #232328;
+  --secondary-foreground: #f2f2f5;
+  --muted: #232328;
+  --muted-foreground: #9d9da8;
+  --accent: var(--brand-blue-light);
+  --accent-foreground: #121214;
+  --destructive: #e15b52;
+  --border: #2c2c33;
+  --input: #2c2c33;
+  --ring: var(--brand-blue-light);
+  --chart-1: var(--brand-blue-light);
+  --chart-2: #a480ea;
+  --chart-3: var(--brand-purple);
+  --chart-4: #6a7ce0;
+  --chart-5: #6b6b76;
+
+  --sidebar: #1a0640;
+  --sidebar-foreground: #f2f2f5;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: var(--brand-purple-dark);
+  --sidebar-accent: #2a0f5c;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a0f5c;
+  --sidebar-ring: var(--brand-blue-light);
+
+  --gut-low: #163726;
+  --gut-low-foreground: #6fd89a;
+  --gut-medium: #3a2f10;
+  --gut-medium-foreground: #f0c85f;
+  --gut-high: #3a1917;
+  --gut-high-foreground: #f3948e;
+
+  --status-ready: #26262d;
+  --status-ready-foreground: #c7c7d4;
+  --status-ongoing: #17264a;
+  --status-ongoing-foreground: var(--brand-blue-light);
+  --status-closed: #163726;
+  --status-closed-foreground: #6fd89a;
+  --status-overdue: #3a1917;
+  --status-overdue-foreground: #f3948e;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
