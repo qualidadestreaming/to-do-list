@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# saida da migracao da planilha (Fase 5) - dados reais de clientes/atividades,
+# nunca deve ir pro repositorio
+/scripts/migration-output/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
