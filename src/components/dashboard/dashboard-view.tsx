@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Select,
   SelectContent,
@@ -35,6 +36,11 @@ export function DashboardView({
   users: AppUser[];
   loadError?: boolean;
 }) {
+  const t = useTranslations("dashboard");
+  const tCommon = useTranslations("common");
+  const tStatus = useTranslations("activities.status");
+  const tGut = useTranslations("activities.gutBands");
+
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [bandFilter, setBandFilter] = useState<GutBandKey | "all">("all");
@@ -71,25 +77,23 @@ export function DashboardView({
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-foreground">Dashboard</h1>
+      <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
 
       {loadError && (
         <Alert variant="destructive">
-          <AlertDescription>
-            Não foi possível carregar os dados agora. Verifique a conexão com o Supabase.
-          </AlertDescription>
+          <AlertDescription>{tCommon("genericLoadError")}</AlertDescription>
         </Alert>
       )}
 
       <div className="flex flex-wrap items-end gap-3 rounded-xl border bg-card p-3">
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">Responsável</Label>
+          <Label className="text-xs text-muted-foreground">{t("filters.owner")}</Label>
           <Select value={ownerFilter} onValueChange={setOwnerFilter}>
             <SelectTrigger className="w-44">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="all">{tCommon("all")}</SelectItem>
               {users.map((u) => (
                 <SelectItem key={u.id} value={u.id}>
                   {u.name}
@@ -99,40 +103,40 @@ export function DashboardView({
           </Select>
         </div>
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">Status</Label>
+          <Label className="text-xs text-muted-foreground">{t("filters.status")}</Label>
           <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
             <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="ready">Pronta</SelectItem>
-              <SelectItem value="on_going">Em andamento</SelectItem>
-              <SelectItem value="closed">Concluída</SelectItem>
-              <SelectItem value="overdue">Atrasadas</SelectItem>
+              <SelectItem value="all">{tCommon("all")}</SelectItem>
+              <SelectItem value="ready">{tStatus("ready")}</SelectItem>
+              <SelectItem value="on_going">{tStatus("on_going")}</SelectItem>
+              <SelectItem value="closed">{tStatus("closed")}</SelectItem>
+              <SelectItem value="overdue">{tStatus("overdueFilter")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">Prioridade GUT</Label>
+          <Label className="text-xs text-muted-foreground">{t("filters.priority")}</Label>
           <Select value={bandFilter} onValueChange={(v) => setBandFilter(v as GutBandKey | "all")}>
             <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              <SelectItem value="high">Alta</SelectItem>
-              <SelectItem value="medium">Média</SelectItem>
-              <SelectItem value="low">Baixa</SelectItem>
+              <SelectItem value="all">{tCommon("all")}</SelectItem>
+              <SelectItem value="high">{tGut("high")}</SelectItem>
+              <SelectItem value="medium">{tGut("medium")}</SelectItem>
+              <SelectItem value="low">{tGut("low")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">Início — de</Label>
+          <Label className="text-xs text-muted-foreground">{t("filters.startFrom")}</Label>
           <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-40" />
         </div>
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">Início — até</Label>
+          <Label className="text-xs text-muted-foreground">{t("filters.startTo")}</Label>
           <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-40" />
         </div>
       </div>

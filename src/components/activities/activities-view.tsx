@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -48,6 +49,10 @@ export function ActivitiesView({
   loadError?: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("activities");
+  const tCommon = useTranslations("common");
+  const tStatus = useTranslations("activities.status");
+  const tGut = useTranslations("activities.gutBands");
   const activities = initialActivities;
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -111,46 +116,44 @@ export function ActivitiesView({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-foreground">Atividades</h1>
+        <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
         <Button type="button" onClick={() => setCreateOpen(true)}>
           <Plus className="size-4" />
-          Nova atividade
+          {t("newActivity")}
         </Button>
       </div>
 
       {loadError && (
         <Alert variant="destructive">
-          <AlertDescription>
-            Não foi possível carregar os dados agora. Verifique a conexão com o Supabase.
-          </AlertDescription>
+          <AlertDescription>{tCommon("genericLoadError")}</AlertDescription>
         </Alert>
       )}
 
       <div className="flex flex-wrap gap-2 rounded-xl border bg-card p-3">
         <Input
-          placeholder="Buscar atividade..."
+          placeholder={t("searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full sm:w-56"
         />
         <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
           <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={t("filters.status")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos os status</SelectItem>
-            <SelectItem value="ready">Pronta</SelectItem>
-            <SelectItem value="on_going">Em andamento</SelectItem>
-            <SelectItem value="closed">Concluída</SelectItem>
-            <SelectItem value="overdue">Atrasadas</SelectItem>
+            <SelectItem value="all">{t("filters.allStatuses")}</SelectItem>
+            <SelectItem value="ready">{tStatus("ready")}</SelectItem>
+            <SelectItem value="on_going">{tStatus("on_going")}</SelectItem>
+            <SelectItem value="closed">{tStatus("closed")}</SelectItem>
+            <SelectItem value="overdue">{tStatus("overdueFilter")}</SelectItem>
           </SelectContent>
         </Select>
         <Select value={ownerFilter} onValueChange={setOwnerFilter}>
           <SelectTrigger className="w-full sm:w-44">
-            <SelectValue placeholder="Responsável" />
+            <SelectValue placeholder={t("filters.owner")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos os responsáveis</SelectItem>
+            <SelectItem value="all">{t("filters.allOwners")}</SelectItem>
             {users.map((u) => (
               <SelectItem key={u.id} value={u.id}>
                 {u.name}
@@ -160,23 +163,23 @@ export function ActivitiesView({
         </Select>
         <Select value={bandFilter} onValueChange={(v) => setBandFilter(v as GutBandKey | "all")}>
           <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Prioridade" />
+            <SelectValue placeholder={t("filters.priority")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Toda prioridade</SelectItem>
-            <SelectItem value="high">Alta (61–125)</SelectItem>
-            <SelectItem value="medium">Média (21–60)</SelectItem>
-            <SelectItem value="low">Baixa (1–20)</SelectItem>
+            <SelectItem value="all">{t("filters.allPriorities")}</SelectItem>
+            <SelectItem value="high">{tGut("highRange")}</SelectItem>
+            <SelectItem value="medium">{tGut("mediumRange")}</SelectItem>
+            <SelectItem value="low">{tGut("lowRange")}</SelectItem>
           </SelectContent>
         </Select>
         <Select value={sort} onValueChange={(v) => setSort(v as SortOption)}>
           <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="Ordenar" />
+            <SelectValue placeholder={t("filters.sort")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="priority_desc">Maior prioridade primeiro</SelectItem>
-            <SelectItem value="priority_asc">Menor prioridade primeiro</SelectItem>
-            <SelectItem value="due_date_asc">Prazo mais próximo</SelectItem>
+            <SelectItem value="priority_desc">{t("filters.sortPriorityDesc")}</SelectItem>
+            <SelectItem value="priority_asc">{t("filters.sortPriorityAsc")}</SelectItem>
+            <SelectItem value="due_date_asc">{t("filters.sortDueDate")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -186,11 +189,11 @@ export function ActivitiesView({
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left text-xs uppercase text-muted-foreground">
               <tr>
-                <th className="px-4 py-3">Atividade</th>
-                <th className="px-4 py-3">Responsável</th>
-                <th className="px-4 py-3">Prazo</th>
-                <th className="px-4 py-3">Prioridade</th>
-                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">{t("columns.activity")}</th>
+                <th className="px-4 py-3">{t("columns.owner")}</th>
+                <th className="px-4 py-3">{t("columns.dueDate")}</th>
+                <th className="px-4 py-3">{t("columns.priority")}</th>
+                <th className="px-4 py-3">{t("columns.status")}</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -223,7 +226,7 @@ export function ActivitiesView({
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
-                    Nenhuma atividade encontrada.
+                    {t("noResults")}
                   </td>
                 </tr>
               )}
@@ -235,15 +238,15 @@ export function ActivitiesView({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Nova atividade</DialogTitle>
+            <DialogTitle>{t("newActivity")}</DialogTitle>
           </DialogHeader>
           <ActivityForm
             users={users}
-            submitLabel="Criar atividade"
+            submitLabel={t("form.submitCreate")}
             onSubmit={async (values) => {
               const result = await createActivity(values);
               if (result.ok) {
-                toast.success("Atividade criada.");
+                toast.success(t("form.createdToast"));
                 setCreateOpen(false);
                 handleChanged();
               }

@@ -2,20 +2,12 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { addFollowUp, getActivityFollowUps } from "@/lib/actions/activity-actions";
+import { useActivityErrorTranslator } from "@/lib/i18n/activity-errors";
 import type { ActivityFollowUp, AppUser } from "@/types/database";
-
-function formatDateTime(iso: string) {
-  return new Date(iso).toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export function FollowUpTimeline({
   activityId,
@@ -26,11 +18,24 @@ export function FollowUpTimeline({
   users: AppUser[];
   onAdded?: () => void;
 }) {
+  const t = useTranslations("activities.followUp");
+  const locale = useLocale();
+  const translateError = useActivityErrorTranslator();
   const [items, setItems] = useState<ActivityFollowUp[]>([]);
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function formatDateTime(iso: string) {
+    return new Date(iso).toLocaleString(locale, {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
   function reload() {
     setLoading(true);
@@ -46,7 +51,7 @@ export function FollowUpTimeline({
 
   function authorName(id: string | null) {
     if (!id) return "—";
-    return users.find((u) => u.id === id)?.name ?? "Ex-colaborador";
+    return users.find((u) => u.id === id)?.name ?? t("unknownAuthor");
   }
 
   function handleAdd() {
@@ -55,7 +60,7 @@ export function FollowUpTimeline({
     startTransition(async () => {
       const result = await addFollowUp({ activityId, note });
       if (!result.ok) {
-        setError(result.error);
+        setError(translateError(result));
         return;
       }
       setNote("");
@@ -68,7 +73,7 @@ export function FollowUpTimeline({
     <div className="space-y-4">
       <div className="space-y-2">
         <Textarea
-          placeholder="Escreva uma atualização..."
+          placeholder={t("placeholder")}
           rows={2}
           value={note}
           onChange={(e) => setNote(e.target.value)}
@@ -76,14 +81,14 @@ export function FollowUpTimeline({
         {error && <p className="text-xs text-destructive">{error}</p>}
         <Button type="button" size="sm" onClick={handleAdd} disabled={isPending || !note.trim()}>
           {isPending && <Loader2 className="size-4 animate-spin" />}
-          Adicionar atualização
+          {t("add")}
         </Button>
       </div>
 
       <div className="max-h-80 space-y-3 overflow-y-auto border-t pt-3">
-        {loading && <p className="text-sm text-muted-foreground">Carregando...</p>}
+        {loading && <p className="text-sm text-muted-foreground">{t("loading")}</p>}
         {!loading && items.length === 0 && (
-          <p className="text-sm text-muted-foreground">Nenhuma atualização registrada ainda.</p>
+          <p className="text-sm text-muted-foreground">{t("none")}</p>
         )}
         {items.map((item) => (
           <div key={item.id} className="rounded-lg border bg-card p-3 text-sm">

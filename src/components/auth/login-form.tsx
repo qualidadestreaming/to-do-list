@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,27 +18,44 @@ import {
 import {
   completeLogin,
   verifyDepartmentPassword,
+  type AuthErrorCode,
   type DepartmentOption,
   type DepartmentUserOption,
 } from "@/lib/actions/auth-actions";
 
 export function LoginForm({ departments }: { departments: DepartmentOption[] }) {
+  const t = useTranslations();
   const [step, setStep] = useState<"department" | "user">("department");
   const [slug, setSlug] = useState("");
   const [password, setPassword] = useState("");
   const [departmentName, setDepartmentName] = useState("");
   const [users, setUsers] = useState<DepartmentUserOption[]>([]);
   const [selectedUserId, setSelectedUserId] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<AuthErrorCode | "pick_user" | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function translateError(code: AuthErrorCode | "pick_user") {
+    const map: Record<AuthErrorCode | "pick_user", string> = {
+      missing_fields: t("auth.missingFields"),
+      invalid_credentials: t("auth.invalidCredentials"),
+      generic_error: t("auth.genericError"),
+      users_load_error: t("auth.usersLoadError"),
+      no_users_in_department: t("auth.noUsersInDepartment"),
+      session_expired: t("auth.sessionExpired"),
+      confirm_error: t("auth.confirmError"),
+      invalid_user: t("auth.invalidUser"),
+      pick_user: t("auth.pickUser"),
+    };
+    return map[code];
+  }
 
   function handleDepartmentSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
+    setErrorCode(null);
     startTransition(async () => {
       const result = await verifyDepartmentPassword({ slug, password });
       if (!result.ok) {
-        setError(result.error);
+        setErrorCode(result.errorCode);
         return;
       }
       setDepartmentName(result.departmentName);
@@ -49,16 +67,16 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
 
   function handleUserSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
+    setErrorCode(null);
     if (!selectedUserId) {
-      setError("Escolha quem você é.");
+      setErrorCode("pick_user");
       return;
     }
     startTransition(async () => {
       const result = await completeLogin({ userId: selectedUserId });
       // completeLogin só retorna em caso de erro (sucesso redireciona no servidor)
       if (result && !result.ok) {
-        setError(result.error);
+        setErrorCode(result.errorCode);
       }
     });
   }
@@ -67,18 +85,18 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
     return (
       <form onSubmit={handleUserSubmit} className="space-y-5 rounded-2xl border bg-card p-6 shadow-sm">
         <div>
-          <p className="text-sm text-muted-foreground">Departamento</p>
+          <p className="text-sm text-muted-foreground">{t("auth.department")}</p>
           <p className="font-medium text-foreground">{departmentName}</p>
         </div>
 
-        {error && (
+        {errorCode && (
           <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>{translateError(errorCode)}</AlertDescription>
           </Alert>
         )}
 
         <div className="space-y-2">
-          <Label>Quem é você?</Label>
+          <Label>{t("auth.whoAreYou")}</Label>
           <RadioGroup value={selectedUserId} onValueChange={setSelectedUserId} className="max-h-64 overflow-y-auto">
             {users.map((u) => (
               <label
@@ -90,7 +108,7 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
                 <div className="flex items-center gap-2">
                   {u.role === "gestor" && (
                     <span className="rounded-full bg-status-ongoing px-2 py-0.5 text-xs text-status-ongoing-foreground">
-                      Gestor
+                      {t("auth.manager")}
                     </span>
                   )}
                   <RadioGroupItem value={u.id} id={`user-${u.id}`} />
@@ -107,15 +125,15 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
             className="flex-1"
             onClick={() => {
               setStep("department");
-              setError(null);
+              setErrorCode(null);
             }}
             disabled={isPending}
           >
-            Voltar
+            {t("auth.back")}
           </Button>
           <Button type="submit" className="flex-1" disabled={isPending}>
             {isPending && <Loader2 className="size-4 animate-spin" />}
-            Entrar
+            {t("auth.enter")}
           </Button>
         </div>
       </form>
@@ -124,17 +142,17 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
 
   return (
     <form onSubmit={handleDepartmentSubmit} className="space-y-5 rounded-2xl border bg-card p-6 shadow-sm">
-      {error && (
+      {errorCode && (
         <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>{translateError(errorCode)}</AlertDescription>
         </Alert>
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="department">Departamento</Label>
+        <Label htmlFor="department">{t("auth.department")}</Label>
         <Select value={slug} onValueChange={setSlug} required>
           <SelectTrigger id="department" className="w-full">
-            <SelectValue placeholder="Selecione o departamento" />
+            <SelectValue placeholder={t("auth.departmentPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
             {departments.map((d) => (
@@ -145,14 +163,12 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
           </SelectContent>
         </Select>
         {departments.length === 0 && (
-          <p className="text-xs text-muted-foreground">
-            Nenhum departamento cadastrado ainda.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("auth.departmentEmpty")}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Senha do departamento</Label>
+        <Label htmlFor="password">{t("auth.password")}</Label>
         <Input
           id="password"
           type="password"
@@ -164,7 +180,7 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
 
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending && <Loader2 className="size-4 animate-spin" />}
-        Continuar
+        {t("auth.continue")}
       </Button>
     </form>
   );

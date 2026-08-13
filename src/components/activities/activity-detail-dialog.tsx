@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Loader2, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,7 @@ import {
   startActivity,
   updateActivity,
 } from "@/lib/actions/activity-actions";
+import { useActivityErrorTranslator, type ActivityActionResult } from "@/lib/i18n/activity-errors";
 import type { Activity, AppUser } from "@/types/database";
 
 export function ActivityDetailDialog({
@@ -37,6 +39,9 @@ export function ActivityDetailDialog({
   onOpenChange: (open: boolean) => void;
   onChanged: () => void;
 }) {
+  const t = useTranslations("activities.detail");
+  const tForm = useTranslations("activities.form");
+  const translateError = useActivityErrorTranslator();
   const [isPending, startTransition] = useTransition();
   const [showCloseForm, setShowCloseForm] = useState(false);
   const [completedDate, setCompletedDate] = useState(new Date().toISOString().slice(0, 10));
@@ -44,12 +49,12 @@ export function ActivityDetailDialog({
 
   const overdue = isOverdue(activity.due_date, activity.status);
 
-  function runAction(action: () => Promise<{ ok: true } | { ok: false; error: string }>) {
+  function runAction(action: () => Promise<ActivityActionResult>) {
     setActionError(null);
     startTransition(async () => {
       const result = await action();
       if (!result.ok) {
-        setActionError(result.error);
+        setActionError(translateError(result));
         return;
       }
       onChanged();
@@ -79,7 +84,7 @@ export function ActivityDetailDialog({
               disabled={isPending}
               onClick={() => runAction(() => startActivity(activity.id))}
             >
-              Iniciar
+              {t("start")}
             </Button>
           )}
           {activity.status !== "closed" && !showCloseForm && (
@@ -89,7 +94,7 @@ export function ActivityDetailDialog({
               disabled={isPending}
               onClick={() => setShowCloseForm(true)}
             >
-              Concluir
+              {t("complete")}
             </Button>
           )}
           {activity.status === "closed" && (
@@ -100,7 +105,7 @@ export function ActivityDetailDialog({
               disabled={isPending}
               onClick={() => runAction(() => reopenActivity(activity.id))}
             >
-              Reabrir
+              {t("reopen")}
             </Button>
           )}
           <Button
@@ -110,20 +115,20 @@ export function ActivityDetailDialog({
             className="ml-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
             disabled={isPending}
             onClick={() => {
-              if (confirm("Excluir esta atividade e todo o histórico de follow-up?")) {
+              if (confirm(t("confirmDelete"))) {
                 runAction(() => deleteActivity(activity.id));
               }
             }}
           >
             <Trash2 className="size-4" />
-            Excluir
+            {t("delete")}
           </Button>
         </div>
 
         {showCloseForm && (
           <div className="flex items-end gap-2 rounded-lg border bg-muted/40 p-3">
             <div className="flex-1 space-y-1">
-              <label className="text-xs text-muted-foreground">Data de conclusão</label>
+              <label className="text-xs text-muted-foreground">{t("completedDate")}</label>
               <Input
                 type="date"
                 value={completedDate}
@@ -143,24 +148,24 @@ export function ActivityDetailDialog({
               }
             >
               {isPending && <Loader2 className="size-4 animate-spin" />}
-              Confirmar
+              {t("confirm")}
             </Button>
             <Button type="button" size="sm" variant="ghost" onClick={() => setShowCloseForm(false)}>
-              Cancelar
+              {t("cancel")}
             </Button>
           </div>
         )}
 
         <Tabs defaultValue="detalhes">
           <TabsList>
-            <TabsTrigger value="detalhes">Detalhes</TabsTrigger>
-            <TabsTrigger value="historico">Follow-up</TabsTrigger>
+            <TabsTrigger value="detalhes">{t("tabDetails")}</TabsTrigger>
+            <TabsTrigger value="historico">{t("tabFollowUp")}</TabsTrigger>
           </TabsList>
           <TabsContent value="detalhes" className="pt-2">
             <ActivityForm
               users={users}
-              submitLabel="Salvar alterações"
-              noteLabel="Nova atualização (opcional, vira um follow-up)"
+              submitLabel={tForm("submitEdit")}
+              noteLabel={tForm("noteOnEdit")}
               defaultValues={{
                 title: activity.title,
                 ownerUserId: activity.owner_user_id,

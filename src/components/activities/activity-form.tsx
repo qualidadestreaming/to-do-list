@@ -4,6 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,27 +20,33 @@ import {
 import { activityFormSchema, type ActivityFormValues } from "@/lib/validation/activity";
 import { computeGutPriority, getGutBand, GUT_SCALE_OPTIONS } from "@/lib/gut";
 import { PriorityBadge } from "@/components/activities/priority-badge";
+import { useActivityErrorTranslator, type ActivityActionResult } from "@/lib/i18n/activity-errors";
 import type { AppUser } from "@/types/database";
 
-const GUT_AXES: { key: "gravidade" | "urgencia" | "tendencia"; label: string }[] = [
-  { key: "gravidade", label: "Gravidade" },
-  { key: "urgencia", label: "Urgência" },
-  { key: "tendencia", label: "Tendência" },
+const GUT_AXES: { key: "gravidade" | "urgencia" | "tendencia"; labelKey: "gravidade" | "urgencia" | "tendencia" }[] = [
+  { key: "gravidade", labelKey: "gravidade" },
+  { key: "urgencia", labelKey: "urgencia" },
+  { key: "tendencia", labelKey: "tendencia" },
 ];
+
+const BAND_LABEL_KEY = { low: "low", medium: "medium", high: "high" } as const;
 
 export function ActivityForm({
   users,
   defaultValues,
   onSubmit,
   submitLabel,
-  noteLabel = "Observação (opcional)",
+  noteLabel,
 }: {
   users: AppUser[];
   defaultValues?: Partial<ActivityFormValues>;
-  onSubmit: (values: ActivityFormValues) => Promise<{ ok: true } | { ok: false; error: string }>;
+  onSubmit: (values: ActivityFormValues) => Promise<ActivityActionResult>;
   submitLabel: string;
   noteLabel?: string;
 }) {
+  const t = useTranslations("activities.form");
+  const tGut = useTranslations("activities.gutBands");
+  const translateError = useActivityErrorTranslator();
   const [serverError, setServerError] = useState<string | null>(null);
   const {
     register,
@@ -72,7 +79,7 @@ export function ActivityForm({
   async function submit(values: ActivityFormValues) {
     setServerError(null);
     const result = await onSubmit(values);
-    if (!result.ok) setServerError(result.error);
+    if (!result.ok) setServerError(translateError(result));
   }
 
   return (
@@ -84,20 +91,20 @@ export function ActivityForm({
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="title">Atividade</Label>
+        <Label htmlFor="title">{t("activityLabel")}</Label>
         <Textarea id="title" rows={3} {...register("title")} />
         {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="ownerUserId">Responsável</Label>
+        <Label htmlFor="ownerUserId">{t("owner")}</Label>
         <Controller
           name="ownerUserId"
           control={control}
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
               <SelectTrigger id="ownerUserId" className="w-full">
-                <SelectValue placeholder="Selecione o responsável" />
+                <SelectValue placeholder={t("ownerPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {users.map((u) => (
@@ -116,25 +123,25 @@ export function ActivityForm({
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
-          <Label htmlFor="startDate">Início</Label>
+          <Label htmlFor="startDate">{t("startDate")}</Label>
           <Input id="startDate" type="date" {...register("startDate")} />
           {errors.startDate && (
             <p className="text-xs text-destructive">{errors.startDate.message}</p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="dueDate">Prazo (opcional)</Label>
+          <Label htmlFor="dueDate">{t("dueDate")}</Label>
           <Input id="dueDate" type="date" {...register("dueDate")} />
           {errors.dueDate && <p className="text-xs text-destructive">{errors.dueDate.message}</p>}
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label>Matriz GUT</Label>
+        <Label>{t("gutMatrix")}</Label>
         <div className="grid grid-cols-3 gap-3">
           {GUT_AXES.map((axis) => (
             <div key={axis.key} className="space-y-1">
-              <span className="text-xs text-muted-foreground">{axis.label}</span>
+              <span className="text-xs text-muted-foreground">{t(axis.labelKey)}</span>
               <Controller
                 name={axis.key}
                 control={control}
@@ -157,16 +164,16 @@ export function ActivityForm({
           ))}
         </div>
         <div className="flex items-center gap-2 pt-1 text-sm text-muted-foreground">
-          Prioridade calculada:
+          {t("calculatedPriority")}
           <PriorityBadge priority={previewPriority} />
           <span className="text-xs">
-            (Baixa 1–20 · Média 21–60 · Alta 61–125 — {getGutBand(previewPriority).label})
+            {t("bandLegend", { band: tGut(BAND_LABEL_KEY[getGutBand(previewPriority).key]) })}
           </span>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="note">{noteLabel}</Label>
+        <Label htmlFor="note">{noteLabel ?? t("note")}</Label>
         <Textarea id="note" rows={2} {...register("note")} />
       </div>
 

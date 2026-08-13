@@ -1,6 +1,7 @@
 "use client";
 
 import { Languages } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +14,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { LOCALE_LABELS, LOCALES } from "@/lib/i18n/config";
 
 export function LanguageSwitcher() {
+  const t = useTranslations("topbar");
   const { locale, setLocale } = useLocale();
 
   return (
@@ -23,7 +25,7 @@ export function LanguageSwitcher() {
           variant="ghost"
           size="icon"
           className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
-          aria-label="Idioma"
+          aria-label={t("language")}
         >
           <Languages className="size-4" />
         </Button>

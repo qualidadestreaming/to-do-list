@@ -15,7 +15,9 @@
     "search": "Buscar",
     "actions": "Ações",
     "yes": "Sim",
-    "no": "Não"
+    "no": "Não",
+    "all": "Todos",
+    "genericLoadError": "Não foi possível carregar os dados agora. Verifique a conexão com o Supabase."
   },
   "topbar": {
     "theme": "Alternar tema",
@@ -27,5 +29,140 @@
     "dashboard": "Dashboard",
     "activities": "Atividades",
     "admin": "Administração"
+  },
+  "auth": {
+    "subtitle": "Gestão de atividades prioritárias por departamento",
+    "department": "Departamento",
+    "departmentPlaceholder": "Selecione o departamento",
+    "departmentEmpty": "Nenhum departamento cadastrado ainda.",
+    "password": "Senha do departamento",
+    "continue": "Continuar",
+    "whoAreYou": "Quem é você?",
+    "enter": "Entrar",
+    "manager": "Gestor",
+    "back": "Voltar",
+    "missingFields": "Informe o departamento e a senha.",
+    "invalidCredentials": "Departamento ou senha incorretos.",
+    "genericError": "Não foi possível validar o login agora. Tente novamente.",
+    "usersLoadError": "Não foi possível carregar a lista de colaboradores.",
+    "noUsersInDepartment": "Este departamento ainda não tem nenhum colaborador cadastrado. Fale com o gestor.",
+    "pickUser": "Escolha quem você é.",
+    "sessionExpired": "Sua sessão de login expirou. Comece de novo.",
+    "confirmError": "Não foi possível confirmar o login agora. Tente novamente.",
+    "invalidUser": "Usuário inválido para este departamento."
+  },
+  "activities": {
+    "title": "Atividades",
+    "newActivity": "Nova atividade",
+    "searchPlaceholder": "Buscar atividade...",
+    "noResults": "Nenhuma atividade encontrada.",
+    "columns": {
+      "activity": "Atividade",
+      "owner": "Responsável",
+      "dueDate": "Prazo",
+      "priority": "Prioridade",
+      "status": "Status"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "Todos os status",
+      "owner": "Responsável",
+      "allOwners": "Todos os responsáveis",
+      "priority": "Prioridade",
+      "allPriorities": "Toda prioridade",
+      "sort": "Ordenar",
+      "sortPriorityDesc": "Maior prioridade primeiro",
+      "sortPriorityAsc": "Menor prioridade primeiro",
+      "sortDueDate": "Prazo mais próximo"
+    },
+    "status": {
+      "ready": "Pronta",
+      "on_going": "Em andamento",
+      "closed": "Concluída",
+      "overdue": "Atrasada",
+      "overdueFilter": "Atrasadas"
+    },
+    "gutBands": {
+      "low": "Baixa",
+      "medium": "Média",
+      "high": "Alta",
+      "lowRange": "Baixa (1–20)",
+      "mediumRange": "Média (21–60)",
+      "highRange": "Alta (61–125)"
+    },
+    "form": {
+      "activityLabel": "Atividade",
+      "owner": "Responsável",
+      "ownerPlaceholder": "Selecione o responsável",
+      "startDate": "Início",
+      "dueDate": "Prazo (opcional)",
+      "gutMatrix": "Matriz GUT",
+      "gravidade": "Gravidade",
+      "urgencia": "Urgência",
+      "tendencia": "Tendência",
+      "calculatedPriority": "Prioridade calculada:",
+      "bandLegend": "(Baixa 1–20 · Média 21–60 · Alta 61–125 — {band})",
+      "note": "Observação (opcional)",
+      "noteOnEdit": "Nova atualização (opcional, vira um follow-up)",
+      "submitCreate": "Criar atividade",
+      "submitEdit": "Salvar alterações",
+      "createdToast": "Atividade criada."
+    },
+    "detail": {
+      "start": "Iniciar",
+      "complete": "Concluir",
+      "reopen": "Reabrir",
+      "delete": "Excluir",
+      "confirmDelete": "Excluir esta atividade e todo o histórico de follow-up?",
+      "completedDate": "Data de conclusão",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "tabDetails": "Detalhes",
+      "tabFollowUp": "Follow-up"
+    },
+    "followUp": {
+      "placeholder": "Escreva uma atualização...",
+      "add": "Adicionar atualização",
+      "none": "Nenhuma atualização registrada ainda.",
+      "loading": "Carregando...",
+      "unknownAuthor": "Ex-colaborador"
+    },
+    "errors": {
+      "createFailed": "Não foi possível criar a atividade.",
+      "updateFailed": "Não foi possível salvar as alterações.",
+      "startFailed": "Não foi possível iniciar a atividade.",
+      "closeFailed": "Não foi possível concluir a atividade.",
+      "reopenFailed": "Não foi possível reabrir a atividade.",
+      "followUpFailed": "Não foi possível registrar a atualização.",
+      "deleteFailed": "Não foi possível excluir a atividade.",
+      "sessionExpired": "Sessão expirada. Faça login novamente."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "filters": {
+      "owner": "Responsável",
+      "status": "Status",
+      "priority": "Prioridade GUT",
+      "startFrom": "Início — de",
+      "startTo": "Início — até"
+    },
+    "kpis": {
+      "total": "Total de atividades",
+      "ready": "Prontas",
+      "onGoing": "Em andamento",
+      "closed": "Concluídas",
+      "overdue": "Atrasadas",
+      "onTimePercentage": "% concluídas no prazo"
+    },
+    "charts": {
+      "statusDistribution": "Distribuição por status",
+      "gutDistribution": "Distribuição por faixa GUT",
+      "performanceRanking": "Performance por responsável (concluídas no prazo × com atraso)",
+      "onTime": "No prazo",
+      "late": "Com atraso",
+      "noData": "Sem dados para o filtro atual.",
+      "noCompletedData": "Nenhuma atividade concluída no filtro atual."
+    }
   }
 }

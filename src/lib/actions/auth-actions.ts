@@ -32,9 +32,21 @@ export interface DepartmentUserOption {
   role: UserRole;
 }
 
+// Códigos de erro (não texto) — o client traduz para o idioma ativo via
+// next-intl. Servidor nunca decide em qual idioma responder.
+export type AuthErrorCode =
+  | "missing_fields"
+  | "invalid_credentials"
+  | "generic_error"
+  | "users_load_error"
+  | "no_users_in_department"
+  | "session_expired"
+  | "confirm_error"
+  | "invalid_user";
+
 type VerifyDepartmentPasswordResult =
   | { ok: true; departmentName: string; users: DepartmentUserOption[] }
-  | { ok: false; error: string };
+  | { ok: false; errorCode: AuthErrorCode };
 
 export async function verifyDepartmentPassword(input: {
   slug: string;
@@ -43,7 +55,7 @@ export async function verifyDepartmentPassword(input: {
   const slug = input.slug?.trim().toLowerCase();
   const password = input.password ?? "";
   if (!slug || !password) {
-    return { ok: false, error: "Informe o departamento e a senha." };
+    return { ok: false, errorCode: "missing_fields" };
   }
 
   const supabase = createServerClient();
@@ -54,12 +66,12 @@ export async function verifyDepartmentPassword(input: {
 
   if (error) {
     console.error("login_department", error);
-    return { ok: false, error: "Não foi possível validar o login agora. Tente novamente." };
+    return { ok: false, errorCode: "generic_error" };
   }
 
   const row = data?.[0];
   if (!row) {
-    return { ok: false, error: "Departamento ou senha incorretos." };
+    return { ok: false, errorCode: "invalid_credentials" };
   }
 
   const { data: usersData, error: usersError } = await supabase.rpc("list_department_users", {
@@ -68,7 +80,7 @@ export async function verifyDepartmentPassword(input: {
 
   if (usersError) {
     console.error("list_department_users", usersError);
-    return { ok: false, error: "Não foi possível carregar a lista de colaboradores." };
+    return { ok: false, errorCode: "users_load_error" };
   }
 
   const users: DepartmentUserOption[] = (usersData ?? []).map(
@@ -80,10 +92,7 @@ export async function verifyDepartmentPassword(input: {
   );
 
   if (users.length === 0) {
-    return {
-      ok: false,
-      error: "Este departamento ainda não tem nenhum colaborador cadastrado. Fale com o gestor.",
-    };
+    return { ok: false, errorCode: "no_users_in_department" };
   }
 
   await createPendingDepartmentCookie({
@@ -94,12 +103,12 @@ export async function verifyDepartmentPassword(input: {
   return { ok: true, departmentName: row.department_name, users };
 }
 
-type CompleteLoginResult = { ok: false; error: string };
+type CompleteLoginResult = { ok: false; errorCode: AuthErrorCode };
 
 export async function completeLogin(input: { userId: string }): Promise<CompleteLoginResult> {
   const pending = await getPendingDepartment();
   if (!pending) {
-    return { ok: false, error: "Sua sessão de login expirou. Comece de novo." };
+    return { ok: false, errorCode: "session_expired" };
   }
 
   const supabase = createServerClient();
@@ -109,7 +118,7 @@ export async function completeLogin(input: { userId: string }): Promise<Complete
 
   if (error) {
     console.error("list_department_users", error);
-    return { ok: false, error: "Não foi possível confirmar o login agora. Tente novamente." };
+    return { ok: false, errorCode: "confirm_error" };
   }
 
   const match = (usersData ?? []).find(
@@ -117,7 +126,7 @@ export async function completeLogin(input: { userId: string }): Promise<Complete
   ) as { user_id: string; user_name: string; user_role: UserRole } | undefined;
 
   if (!match) {
-    return { ok: false, error: "Usuário inválido para este departamento." };
+    return { ok: false, errorCode: "invalid_user" };
   }
 
   await createSessionCookie({

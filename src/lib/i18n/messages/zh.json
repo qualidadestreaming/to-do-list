@@ -15,7 +15,9 @@
     "search": "搜索",
     "actions": "操作",
     "yes": "是",
-    "no": "否"
+    "no": "否",
+    "all": "全部",
+    "genericLoadError": "现在无法加载数据。请检查与 Supabase 的连接。"
   },
   "topbar": {
     "theme": "切换主题",
@@ -27,5 +29,140 @@
     "dashboard": "仪表盘",
     "activities": "任务",
     "admin": "管理"
+  },
+  "auth": {
+    "subtitle": "按部门管理优先任务",
+    "department": "部门",
+    "departmentPlaceholder": "选择部门",
+    "departmentEmpty": "尚未注册任何部门。",
+    "password": "部门密码",
+    "continue": "继续",
+    "whoAreYou": "您是谁？",
+    "enter": "登录",
+    "manager": "经理",
+    "back": "返回",
+    "missingFields": "请输入部门和密码。",
+    "invalidCredentials": "部门或密码错误。",
+    "genericError": "目前无法验证登录，请重试。",
+    "usersLoadError": "无法加载协作者列表。",
+    "noUsersInDepartment": "该部门尚未注册任何协作者，请联系经理。",
+    "pickUser": "请选择您是谁。",
+    "sessionExpired": "登录会话已过期，请重新开始。",
+    "confirmError": "目前无法确认登录，请重试。",
+    "invalidUser": "该部门中没有此用户。"
+  },
+  "activities": {
+    "title": "任务",
+    "newActivity": "新建任务",
+    "searchPlaceholder": "搜索任务...",
+    "noResults": "未找到任务。",
+    "columns": {
+      "activity": "任务",
+      "owner": "负责人",
+      "dueDate": "截止日期",
+      "priority": "优先级",
+      "status": "状态"
+    },
+    "filters": {
+      "status": "状态",
+      "allStatuses": "所有状态",
+      "owner": "负责人",
+      "allOwners": "所有负责人",
+      "priority": "优先级",
+      "allPriorities": "所有优先级",
+      "sort": "排序",
+      "sortPriorityDesc": "优先级从高到低",
+      "sortPriorityAsc": "优先级从低到高",
+      "sortDueDate": "最近截止日期"
+    },
+    "status": {
+      "ready": "待处理",
+      "on_going": "进行中",
+      "closed": "已完成",
+      "overdue": "已逾期",
+      "overdueFilter": "已逾期"
+    },
+    "gutBands": {
+      "low": "低",
+      "medium": "中",
+      "high": "高",
+      "lowRange": "低 (1–20)",
+      "mediumRange": "中 (21–60)",
+      "highRange": "高 (61–125)"
+    },
+    "form": {
+      "activityLabel": "任务",
+      "owner": "负责人",
+      "ownerPlaceholder": "选择负责人",
+      "startDate": "开始日期",
+      "dueDate": "截止日期（可选）",
+      "gutMatrix": "GUT 矩阵",
+      "gravidade": "严重性",
+      "urgencia": "紧急性",
+      "tendencia": "趋势",
+      "calculatedPriority": "计算出的优先级：",
+      "bandLegend": "（低 1–20 · 中 21–60 · 高 61–125 — {band}）",
+      "note": "备注（可选）",
+      "noteOnEdit": "新更新（可选，将成为跟进记录）",
+      "submitCreate": "创建任务",
+      "submitEdit": "保存更改",
+      "createdToast": "任务已创建。"
+    },
+    "detail": {
+      "start": "开始",
+      "complete": "完成",
+      "reopen": "重新打开",
+      "delete": "删除",
+      "confirmDelete": "确定要删除此任务及其全部跟进记录吗？",
+      "completedDate": "完成日期",
+      "confirm": "确认",
+      "cancel": "取消",
+      "tabDetails": "详情",
+      "tabFollowUp": "跟进"
+    },
+    "followUp": {
+      "placeholder": "写一条更新...",
+      "add": "添加更新",
+      "none": "尚无跟进记录。",
+      "loading": "加载中...",
+      "unknownAuthor": "前协作者"
+    },
+    "errors": {
+      "createFailed": "无法创建任务。",
+      "updateFailed": "无法保存更改。",
+      "startFailed": "无法开始该任务。",
+      "closeFailed": "无法完成该任务。",
+      "reopenFailed": "无法重新打开该任务。",
+      "followUpFailed": "无法记录更新。",
+      "deleteFailed": "无法删除该任务。",
+      "sessionExpired": "会话已过期，请重新登录。"
+    }
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "filters": {
+      "owner": "负责人",
+      "status": "状态",
+      "priority": "GUT 优先级",
+      "startFrom": "开始日期 — 从",
+      "startTo": "开始日期 — 至"
+    },
+    "kpis": {
+      "total": "任务总数",
+      "ready": "待处理",
+      "onGoing": "进行中",
+      "closed": "已完成",
+      "overdue": "已逾期",
+      "onTimePercentage": "按时完成率"
+    },
+    "charts": {
+      "statusDistribution": "按状态分布",
+      "gutDistribution": "按 GUT 等级分布",
+      "performanceRanking": "按负责人的绩效（按时完成 × 逾期）",
+      "onTime": "按时",
+      "late": "逾期",
+      "noData": "当前筛选条件下没有数据。",
+      "noCompletedData": "当前筛选条件下没有已完成的任务。"
+    }
   }
 }

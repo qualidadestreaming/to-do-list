@@ -10,17 +10,34 @@ import {
   type ActivityFormValues,
 } from "@/lib/validation/activity";
 
-type ActionResult = { ok: true } | { ok: false; error: string };
+// Códigos de erro (não texto) — o client traduz para o idioma ativo via
+// next-intl. "validation" significa que o zod já rejeitou os dados (a
+// mensagem de validação em si vem do próprio schema, hoje só em PT — ver
+// CLAUDE.md, escopo cortado por tempo).
+export type ActivityErrorCode =
+  | "session_expired"
+  | "validation"
+  | "create_failed"
+  | "update_failed"
+  | "start_failed"
+  | "close_failed"
+  | "reopen_failed"
+  | "follow_up_failed"
+  | "delete_failed";
+
+type ActionResult =
+  | { ok: true }
+  | { ok: false; errorCode: ActivityErrorCode; validationMessage?: string };
 
 const ACTIVITIES_PATH = "/app/atividades";
 
 export async function createActivity(input: ActivityFormValues): Promise<ActionResult> {
   const session = await getSession();
-  if (!session) return { ok: false, error: "Sessão expirada. Faça login novamente." };
+  if (!session) return { ok: false, errorCode: "session_expired" };
 
   const parsed = activityFormSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { ok: false, errorCode: "validation", validationMessage: parsed.error.issues[0]?.message };
   }
   const values = parsed.data;
 
@@ -46,7 +63,7 @@ export async function createActivity(input: ActivityFormValues): Promise<ActionR
 
   if (error || !activity) {
     console.error("createActivity", error);
-    return { ok: false, error: "Não foi possível criar a atividade." };
+    return { ok: false, errorCode: "create_failed" };
   }
 
   if (values.note) {
@@ -66,11 +83,11 @@ export async function updateActivity(
   input: ActivityFormValues
 ): Promise<ActionResult> {
   const session = await getSession();
-  if (!session) return { ok: false, error: "Sessão expirada. Faça login novamente." };
+  if (!session) return { ok: false, errorCode: "session_expired" };
 
   const parsed = activityFormSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { ok: false, errorCode: "validation", validationMessage: parsed.error.issues[0]?.message };
   }
   const values = parsed.data;
 
@@ -90,7 +107,7 @@ export async function updateActivity(
 
   if (error) {
     console.error("updateActivity", error);
-    return { ok: false, error: "Não foi possível salvar as alterações." };
+    return { ok: false, errorCode: "update_failed" };
   }
 
   if (values.note) {
@@ -115,7 +132,7 @@ export async function startActivity(activityId: string): Promise<ActionResult> {
 
   if (error) {
     console.error("startActivity", error);
-    return { ok: false, error: "Não foi possível iniciar a atividade." };
+    return { ok: false, errorCode: "start_failed" };
   }
   revalidatePath(ACTIVITIES_PATH);
   return { ok: true };
@@ -127,7 +144,7 @@ export async function closeActivity(input: {
 }): Promise<ActionResult> {
   const parsed = closeActivitySchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { ok: false, errorCode: "validation", validationMessage: parsed.error.issues[0]?.message };
   }
 
   const supabase = await createSessionClient();
@@ -138,7 +155,7 @@ export async function closeActivity(input: {
 
   if (error) {
     console.error("closeActivity", error);
-    return { ok: false, error: "Não foi possível concluir a atividade." };
+    return { ok: false, errorCode: "close_failed" };
   }
   revalidatePath(ACTIVITIES_PATH);
   return { ok: true };
@@ -154,7 +171,7 @@ export async function reopenActivity(activityId: string): Promise<ActionResult> 
 
   if (error) {
     console.error("reopenActivity", error);
-    return { ok: false, error: "Não foi possível reabrir a atividade." };
+    return { ok: false, errorCode: "reopen_failed" };
   }
   revalidatePath(ACTIVITIES_PATH);
   return { ok: true };
@@ -165,11 +182,11 @@ export async function addFollowUp(input: {
   note: string;
 }): Promise<ActionResult> {
   const session = await getSession();
-  if (!session) return { ok: false, error: "Sessão expirada. Faça login novamente." };
+  if (!session) return { ok: false, errorCode: "session_expired" };
 
   const parsed = followUpSchema.safeParse(input);
   if (!parsed.success) {
-    return { ok: false, error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
+    return { ok: false, errorCode: "validation", validationMessage: parsed.error.issues[0]?.message };
   }
 
   const supabase = await createSessionClient();
@@ -181,7 +198,7 @@ export async function addFollowUp(input: {
 
   if (error) {
     console.error("addFollowUp", error);
-    return { ok: false, error: "Não foi possível registrar a atualização." };
+    return { ok: false, errorCode: "follow_up_failed" };
   }
   revalidatePath(ACTIVITIES_PATH);
   return { ok: true };
@@ -208,7 +225,7 @@ export async function deleteActivity(activityId: string): Promise<ActionResult> 
 
   if (error) {
     console.error("deleteActivity", error);
-    return { ok: false, error: "Não foi possível excluir a atividade." };
+    return { ok: false, errorCode: "delete_failed" };
   }
   revalidatePath(ACTIVITIES_PATH);
   return { ok: true };

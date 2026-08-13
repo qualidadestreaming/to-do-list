@@ -1,20 +1,25 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { DashboardKpis } from "@/lib/dashboard-metrics";
 import { cn } from "@/lib/utils";
 
 export function KpiCards({ kpis }: { kpis: DashboardKpis }) {
+  const t = useTranslations("dashboard.kpis");
+
   const items: { label: string; value: string; accent?: string }[] = [
-    { label: "Total de atividades", value: String(kpis.total) },
-    { label: "Prontas", value: String(kpis.ready) },
-    { label: "Em andamento", value: String(kpis.onGoing) },
-    { label: "Concluídas", value: String(kpis.closed) },
+    { label: t("total"), value: String(kpis.total) },
+    { label: t("ready"), value: String(kpis.ready) },
+    { label: t("onGoing"), value: String(kpis.onGoing) },
+    { label: t("closed"), value: String(kpis.closed) },
     {
-      label: "Atrasadas",
+      label: t("overdue"),
       value: String(kpis.overdue),
       accent: kpis.overdue > 0 ? "text-status-overdue-foreground" : undefined,
     },
     {
-      label: "% concluídas no prazo",
+      label: t("onTimePercentage"),
       value: kpis.onTimePercentage === null ? "—" : `${kpis.onTimePercentage}%`,
     },
   ];

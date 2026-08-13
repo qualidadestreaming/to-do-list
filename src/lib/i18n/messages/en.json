@@ -15,7 +15,9 @@
     "search": "Search",
     "actions": "Actions",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "all": "All",
+    "genericLoadError": "Could not load data right now. Check the Supabase connection."
   },
   "topbar": {
     "theme": "Toggle theme",
@@ -27,5 +29,140 @@
     "dashboard": "Dashboard",
     "activities": "Activities",
     "admin": "Administration"
+  },
+  "auth": {
+    "subtitle": "Priority activity management by department",
+    "department": "Department",
+    "departmentPlaceholder": "Select the department",
+    "departmentEmpty": "No department registered yet.",
+    "password": "Department password",
+    "continue": "Continue",
+    "whoAreYou": "Who are you?",
+    "enter": "Log in",
+    "manager": "Manager",
+    "back": "Back",
+    "missingFields": "Enter the department and password.",
+    "invalidCredentials": "Wrong department or password.",
+    "genericError": "Could not validate the login right now. Please try again.",
+    "usersLoadError": "Could not load the list of collaborators.",
+    "noUsersInDepartment": "This department has no collaborators registered yet. Talk to the manager.",
+    "pickUser": "Choose who you are.",
+    "sessionExpired": "Your login session expired. Start again.",
+    "confirmError": "Could not confirm the login right now. Please try again.",
+    "invalidUser": "Invalid user for this department."
+  },
+  "activities": {
+    "title": "Activities",
+    "newActivity": "New activity",
+    "searchPlaceholder": "Search activity...",
+    "noResults": "No activity found.",
+    "columns": {
+      "activity": "Activity",
+      "owner": "Owner",
+      "dueDate": "Due date",
+      "priority": "Priority",
+      "status": "Status"
+    },
+    "filters": {
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "owner": "Owner",
+      "allOwners": "All owners",
+      "priority": "Priority",
+      "allPriorities": "All priorities",
+      "sort": "Sort",
+      "sortPriorityDesc": "Highest priority first",
+      "sortPriorityAsc": "Lowest priority first",
+      "sortDueDate": "Nearest due date"
+    },
+    "status": {
+      "ready": "Ready",
+      "on_going": "In progress",
+      "closed": "Done",
+      "overdue": "Overdue",
+      "overdueFilter": "Overdue"
+    },
+    "gutBands": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "lowRange": "Low (1–20)",
+      "mediumRange": "Medium (21–60)",
+      "highRange": "High (61–125)"
+    },
+    "form": {
+      "activityLabel": "Activity",
+      "owner": "Owner",
+      "ownerPlaceholder": "Select the owner",
+      "startDate": "Start",
+      "dueDate": "Due date (optional)",
+      "gutMatrix": "GUT Matrix",
+      "gravidade": "Severity",
+      "urgencia": "Urgency",
+      "tendencia": "Trend",
+      "calculatedPriority": "Calculated priority:",
+      "bandLegend": "(Low 1–20 · Medium 21–60 · High 61–125 — {band})",
+      "note": "Note (optional)",
+      "noteOnEdit": "New update (optional, becomes a follow-up)",
+      "submitCreate": "Create activity",
+      "submitEdit": "Save changes",
+      "createdToast": "Activity created."
+    },
+    "detail": {
+      "start": "Start",
+      "complete": "Complete",
+      "reopen": "Reopen",
+      "delete": "Delete",
+      "confirmDelete": "Delete this activity and its whole follow-up history?",
+      "completedDate": "Completion date",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "tabDetails": "Details",
+      "tabFollowUp": "Follow-up"
+    },
+    "followUp": {
+      "placeholder": "Write an update...",
+      "add": "Add update",
+      "none": "No update registered yet.",
+      "loading": "Loading...",
+      "unknownAuthor": "Former collaborator"
+    },
+    "errors": {
+      "createFailed": "Could not create the activity.",
+      "updateFailed": "Could not save the changes.",
+      "startFailed": "Could not start the activity.",
+      "closeFailed": "Could not complete the activity.",
+      "reopenFailed": "Could not reopen the activity.",
+      "followUpFailed": "Could not register the update.",
+      "deleteFailed": "Could not delete the activity.",
+      "sessionExpired": "Session expired. Please log in again."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "filters": {
+      "owner": "Owner",
+      "status": "Status",
+      "priority": "GUT priority",
+      "startFrom": "Start — from",
+      "startTo": "Start — to"
+    },
+    "kpis": {
+      "total": "Total activities",
+      "ready": "Ready",
+      "onGoing": "In progress",
+      "closed": "Done",
+      "overdue": "Overdue",
+      "onTimePercentage": "% completed on time"
+    },
+    "charts": {
+      "statusDistribution": "Distribution by status",
+      "gutDistribution": "Distribution by GUT band",
+      "performanceRanking": "Performance by owner (on time × overdue)",
+      "onTime": "On time",
+      "late": "Overdue",
+      "noData": "No data for the current filter.",
+      "noCompletedData": "No completed activity for the current filter."
+    }
   }
 }

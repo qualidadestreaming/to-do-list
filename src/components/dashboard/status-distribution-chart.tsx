@@ -1,6 +1,7 @@
 "use client";
 
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { StatusDatum } from "@/lib/dashboard-metrics";
 
@@ -11,26 +12,29 @@ const COLORS: Record<StatusDatum["key"], string> = {
 };
 
 export function StatusDistributionChart({ data }: { data: StatusDatum[] }) {
+  const t = useTranslations("dashboard.charts");
+  const tStatus = useTranslations("activities.status");
   const hasData = data.some((d) => d.value > 0);
+  const chartData = data.map((d) => ({ ...d, name: tStatus(d.key) }));
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-medium">Distribuição por status</CardTitle>
+        <CardTitle className="text-sm font-medium">{t("statusDistribution")}</CardTitle>
       </CardHeader>
       <CardContent className="h-64">
         {hasData ? (
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={data}
+                data={chartData}
                 dataKey="value"
                 nameKey="name"
                 innerRadius="55%"
                 outerRadius="85%"
                 paddingAngle={2}
               >
-                {data.map((entry) => (
+                {chartData.map((entry) => (
                   <Cell key={entry.key} fill={COLORS[entry.key]} />
                 ))}
               </Pie>
@@ -40,7 +44,7 @@ export function StatusDistributionChart({ data }: { data: StatusDatum[] }) {
           </ResponsiveContainer>
         ) : (
           <p className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            Sem dados para o filtro atual.
+            {t("noData")}
           </p>
         )}
       </CardContent>

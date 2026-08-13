@@ -1,4 +1,4 @@
-import { isOverdue } from "@/components/activities/status-badge";
+import { isOverdue } from "@/lib/activity-status";
 import type { Activity, AppUser } from "@/types/database";
 
 export interface DashboardKpis {
@@ -27,39 +27,32 @@ export function computeKpis(activities: Activity[]): DashboardKpis {
   return { total, ready, onGoing, closed, overdue, onTimePercentage };
 }
 
+// name/label ficam de fora de propósito — são libs puras sem acesso a hooks
+// de i18n; os componentes de gráfico traduzem `key` via useTranslations.
+
 export interface StatusDatum {
   key: "ready" | "on_going" | "closed";
-  name: string;
   value: number;
 }
 
 export function computeStatusDistribution(activities: Activity[]): StatusDatum[] {
   return [
-    { key: "ready", name: "Pronta", value: activities.filter((a) => a.status === "ready").length },
-    {
-      key: "on_going",
-      name: "Em andamento",
-      value: activities.filter((a) => a.status === "on_going").length,
-    },
-    { key: "closed", name: "Concluída", value: activities.filter((a) => a.status === "closed").length },
+    { key: "ready", value: activities.filter((a) => a.status === "ready").length },
+    { key: "on_going", value: activities.filter((a) => a.status === "on_going").length },
+    { key: "closed", value: activities.filter((a) => a.status === "closed").length },
   ];
 }
 
 export interface GutBandDatum {
   key: "low" | "medium" | "high";
-  name: string;
   value: number;
 }
 
 export function computeGutBandDistribution(activities: Activity[]): GutBandDatum[] {
   return [
-    { key: "low", name: "Baixa (1–20)", value: activities.filter((a) => a.priority <= 20).length },
-    {
-      key: "medium",
-      name: "Média (21–60)",
-      value: activities.filter((a) => a.priority >= 21 && a.priority <= 60).length,
-    },
-    { key: "high", name: "Alta (61–125)", value: activities.filter((a) => a.priority >= 61).length },
+    { key: "low", value: activities.filter((a) => a.priority <= 20).length },
+    { key: "medium", value: activities.filter((a) => a.priority >= 21 && a.priority <= 60).length },
+    { key: "high", value: activities.filter((a) => a.priority >= 61).length },
   ];
 }
 

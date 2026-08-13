@@ -1,18 +1,18 @@
 "use client";
 
 import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { PerformanceDatum } from "@/lib/dashboard-metrics";
 
 export function PerformanceRankingChart({ data }: { data: PerformanceDatum[] }) {
+  const t = useTranslations("dashboard.charts");
   const height = Math.max(64 * data.length, 160);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-medium">
-          Performance por responsável (concluídas no prazo × com atraso)
-        </CardTitle>
+        <CardTitle className="text-sm font-medium">{t("performanceRanking")}</CardTitle>
       </CardHeader>
       <CardContent style={{ height }}>
         {data.length > 0 ? (
@@ -34,14 +34,14 @@ export function PerformanceRankingChart({ data }: { data: PerformanceDatum[] }) 
               <Legend />
               <Bar
                 dataKey="onTime"
-                name="No prazo"
+                name={t("onTime")}
                 stackId="perf"
                 fill="var(--status-closed-foreground)"
                 radius={[0, 0, 0, 0]}
               />
               <Bar
                 dataKey="late"
-                name="Com atraso"
+                name={t("late")}
                 stackId="perf"
                 fill="var(--status-overdue-foreground)"
                 radius={[0, 4, 4, 0]}
@@ -50,7 +50,7 @@ export function PerformanceRankingChart({ data }: { data: PerformanceDatum[] }) 
           </ResponsiveContainer>
         ) : (
           <p className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            Nenhuma atividade concluída no filtro atual.
+            {t("noCompletedData")}
           </p>
         )}
       </CardContent>

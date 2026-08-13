@@ -9,6 +9,7 @@ import type { SessionPayload } from "@/lib/auth/session";
 
 export function Topbar({ session }: { session: SessionPayload }) {
   const t = useTranslations("topbar");
+  const tAuth = useTranslations("auth");
 
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between gap-4 border-b border-sidebar-border bg-sidebar px-4 text-sidebar-foreground sm:px-6">
@@ -26,7 +27,7 @@ export function Topbar({ session }: { session: SessionPayload }) {
           <div>{t("loggedInAs")}</div>
           <div className="font-medium text-sidebar-foreground">
             {session.userName}
-            {session.userRole === "gestor" ? " · Gestor" : ""}
+            {session.userRole === "gestor" ? ` · ${tAuth("manager")}` : ""}
           </div>
         </div>
         <LanguageSwitcher />

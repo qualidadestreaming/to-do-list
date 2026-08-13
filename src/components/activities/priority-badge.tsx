@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { getGutBand } from "@/lib/gut";
 import { cn } from "@/lib/utils";
 
@@ -8,17 +11,19 @@ const BAND_CLASSES: Record<string, string> = {
 };
 
 export function PriorityBadge({ priority }: { priority: number }) {
+  const t = useTranslations("activities.gutBands");
   const band = getGutBand(priority);
+  const label = t(band.key);
   return (
     <span
       className={cn(
         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium tabular-nums",
         BAND_CLASSES[band.key]
       )}
-      title={`Prioridade GUT: ${priority} (${band.label})`}
+      title={`GUT: ${priority} (${label})`}
     >
       {priority}
-      <span className="opacity-80">· {band.label}</span>
+      <span className="opacity-80">· {label}</span>
     </span>
   );
 }
