@@ -1,5 +1,6 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
+import { getSessionToken } from "@/lib/auth/session";
 
 /**
  * Client Supabase para uso em Server Components/Actions/Route Handlers,
@@ -21,6 +22,12 @@ export function createServerClient(accessToken?: string) {
         : undefined,
     }
   );
+}
+
+/** Como createServerClient(), mas já lê o token de sessão do cookie httpOnly atual. */
+export async function createSessionClient() {
+  const token = await getSessionToken();
+  return createServerClient(token ?? undefined);
 }
 
 /**

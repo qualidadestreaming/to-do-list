@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "TDL Multilaser"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "back": "返回",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "新建",
+    "close": "关闭",
+    "loading": "加载中...",
+    "confirm": "确认",
+    "search": "搜索",
+    "actions": "操作",
+    "yes": "是",
+    "no": "否"
+  },
+  "topbar": {
+    "theme": "切换主题",
+    "language": "语言",
+    "logout": "退出登录",
+    "loggedInAs": "当前登录"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "activities": "任务",
+    "admin": "管理"
+  }
+}

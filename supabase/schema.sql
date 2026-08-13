@@ -156,6 +156,17 @@ $$;
 -- -----------------------------------------------------------------------------
 -- 5. LOGIN (bypassa RLS de propósito — é o único caminho antes de existir sessão)
 -- -----------------------------------------------------------------------------
+-- Lista pública (sem senha) para popular o seletor de departamento na tela de
+-- login — nome/slug de departamento não é informação sensível.
+create or replace function list_departments_for_login()
+returns table (slug text, name text)
+language sql
+security definer
+set search_path = public
+as $$
+  select slug, name from departments order by name
+$$;
+
 create or replace function login_department(p_slug text, p_password text)
 returns table (department_id uuid, department_name text)
 language sql

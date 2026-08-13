@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "TDL Multilaser"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "loading": "Loading...",
+    "confirm": "Confirm",
+    "search": "Search",
+    "actions": "Actions",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "topbar": {
+    "theme": "Toggle theme",
+    "language": "Language",
+    "logout": "Log out",
+    "loggedInAs": "Logged in as"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "activities": "Activities",
+    "admin": "Administration"
+  }
+}
