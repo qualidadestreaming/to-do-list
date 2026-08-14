@@ -251,11 +251,14 @@
     "charts": {
       "statusDistribution": "Distribution by status",
       "gutDistribution": "Distribution by GUT band",
-      "performanceRanking": "Performance by owner (on time × overdue)",
+      "performanceRanking": "Activities by person",
+      "performanceRankingSubtitle": "Reflects the current filter — open, overdue, and completed (on time/late)",
       "closuresByOwner": "Closures by person",
       "closuresByOwnerSubtitle": "Total volume of completed activities",
+      "active": "Open",
       "onTime": "On time",
-      "late": "Overdue",
+      "late": "Completed late",
+      "overdueLabel": "Overdue",
       "noData": "No data for the current filter.",
       "noCompletedData": "No completed activity for the current filter."
     }

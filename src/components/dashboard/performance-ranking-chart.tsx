@@ -4,9 +4,9 @@ import { Bar, BarChart, CartesianGrid, LabelList, Legend, ResponsiveContainer, T
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DASHBOARD_CARD_HEIGHT, RANKING_ROW_HEIGHT } from "@/components/dashboard/chart-sizing";
-import type { PerformanceDatum } from "@/lib/dashboard-metrics";
+import type { ActivityBreakdownDatum } from "@/lib/dashboard-metrics";
 
-export function PerformanceRankingChart({ data }: { data: PerformanceDatum[] }) {
+export function PerformanceRankingChart({ data }: { data: ActivityBreakdownDatum[] }) {
   const t = useTranslations("dashboard.charts");
   const innerHeight = Math.max(RANKING_ROW_HEIGHT * data.length, DASHBOARD_CARD_HEIGHT);
 
@@ -14,6 +14,7 @@ export function PerformanceRankingChart({ data }: { data: PerformanceDatum[] }) 
     <Card>
       <CardHeader>
         <CardTitle className="text-sm font-medium">{t("performanceRanking")}</CardTitle>
+        <p className="text-xs text-muted-foreground">{t("performanceRankingSubtitle")}</p>
       </CardHeader>
       <CardContent style={{ height: DASHBOARD_CARD_HEIGHT }} className="overflow-y-auto">
         {data.length > 0 ? (
@@ -38,46 +39,18 @@ export function PerformanceRankingChart({ data }: { data: PerformanceDatum[] }) 
                 />
                 <Tooltip cursor={{ fill: "var(--muted)" }} />
                 <Legend />
-                <Bar
-                  dataKey="onTime"
-                  name={t("onTime")}
-                  stackId="perf"
-                  fill="var(--status-closed-foreground)"
-                  radius={[0, 0, 0, 0]}
-                  maxBarSize={26}
-                >
-                  <LabelList
-                    dataKey="onTime"
-                    position="center"
-                    fill="var(--card)"
-                    fontSize={12}
-                    fontWeight={700}
-                    formatter={(value) => (Number(value) > 0 ? value : "")}
-                  />
+                <Bar dataKey="active" name={t("active")} stackId="perf" fill="var(--status-ongoing-foreground)" maxBarSize={26}>
+                  <LabelList dataKey="active" position="center" fill="var(--card)" fontSize={12} fontWeight={700} formatter={(value) => (Number(value) > 0 ? value : "")} />
                 </Bar>
-                <Bar
-                  dataKey="late"
-                  name={t("late")}
-                  stackId="perf"
-                  fill="var(--status-overdue-foreground)"
-                  radius={[0, 4, 4, 0]}
-                  maxBarSize={26}
-                >
-                  <LabelList
-                    dataKey="late"
-                    position="center"
-                    fill="var(--card)"
-                    fontSize={12}
-                    fontWeight={700}
-                    formatter={(value) => (Number(value) > 0 ? value : "")}
-                  />
-                  <LabelList
-                    dataKey="total"
-                    position="right"
-                    fill="var(--foreground)"
-                    fontSize={12}
-                    fontWeight={700}
-                  />
+                <Bar dataKey="onTime" name={t("onTime")} stackId="perf" fill="var(--status-closed-foreground)" maxBarSize={26}>
+                  <LabelList dataKey="onTime" position="center" fill="var(--card)" fontSize={12} fontWeight={700} formatter={(value) => (Number(value) > 0 ? value : "")} />
+                </Bar>
+                <Bar dataKey="late" name={t("late")} stackId="perf" fill="var(--gut-medium-foreground)" maxBarSize={26}>
+                  <LabelList dataKey="late" position="center" fill="var(--card)" fontSize={12} fontWeight={700} formatter={(value) => (Number(value) > 0 ? value : "")} />
+                </Bar>
+                <Bar dataKey="overdue" name={t("overdueLabel")} stackId="perf" fill="var(--status-overdue-foreground)" radius={[0, 4, 4, 0]} maxBarSize={26}>
+                  <LabelList dataKey="overdue" position="center" fill="var(--card)" fontSize={12} fontWeight={700} formatter={(value) => (Number(value) > 0 ? value : "")} />
+                  <LabelList dataKey="total" position="right" fill="var(--foreground)" fontSize={12} fontWeight={700} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

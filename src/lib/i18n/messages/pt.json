@@ -251,11 +251,14 @@
     "charts": {
       "statusDistribution": "Distribuição por status",
       "gutDistribution": "Distribuição por faixa GUT",
-      "performanceRanking": "Performance por responsável (concluídas no prazo × com atraso)",
+      "performanceRanking": "Atividades por pessoa",
+      "performanceRankingSubtitle": "Reflete o filtro atual — em aberto, atrasadas e concluídas (no prazo/com atraso)",
       "closuresByOwner": "Fechamento por pessoa",
       "closuresByOwnerSubtitle": "Volume total de atividades concluídas",
+      "active": "Em aberto",
       "onTime": "No prazo",
-      "late": "Com atraso",
+      "late": "Concluída c/ atraso",
+      "overdueLabel": "Atrasada",
       "noData": "Sem dados para o filtro atual.",
       "noCompletedData": "Nenhuma atividade concluída no filtro atual."
     }

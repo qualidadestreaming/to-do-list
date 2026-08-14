@@ -89,11 +89,17 @@ function DialogContent({
   )
 }
 
+// Sticky no topo da área que rola (não sai de vista junto com o X quando o
+// conteúdo do modal é rolado) — título e botão de fechar ficam sempre
+// visíveis juntos.
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn(
+        "sticky -top-4 z-10 -mx-4 -mt-4 flex flex-col gap-2 bg-popover px-4 pt-4 pb-3",
+        className
+      )}
       {...props}
     />
   )

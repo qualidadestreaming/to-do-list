@@ -22,7 +22,7 @@ import {
   computeClosuresByOwner,
   computeGutBandDistribution,
   computeKpis,
-  computePerformanceByOwner,
+  computeActivityBreakdownByOwner,
   computeStatusDistribution,
 } from "@/lib/dashboard-metrics";
 import type { Activity, ActivityStatus, AppUser } from "@/types/database";
@@ -88,7 +88,7 @@ export function DashboardView({
   const statusData = useMemo(() => computeStatusDistribution(filtered), [filtered]);
   const bandData = useMemo(() => computeGutBandDistribution(filtered), [filtered]);
   const performanceData = useMemo(
-    () => computePerformanceByOwner(filtered, users),
+    () => computeActivityBreakdownByOwner(filtered, users),
     [filtered, users]
   );
   const closuresData = useMemo(() => computeClosuresByOwner(filtered, users), [filtered, users]);
