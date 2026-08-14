@@ -10,20 +10,31 @@ Construído em fases. O usuário pediu explicitamente, numa rodada (2026-08-13),
 
 ## Estado atual (resumo pra retomar rápido)
 
-**As 6 fases do roadmap original estão implementadas** (código completo, `npm run build` limpo). **O que falta não é código, é infraestrutura que só o usuário pode prover**: um projeto Supabase real (hoje `.env.local` tem só placeholder) e resolver o acesso de push no GitHub. Sem o Supabase real, **nenhuma tela que depende de dado (Atividades/Dashboard/Admin) foi testada de ponta a ponta** — só a tela de Login foi de fato exercitada no preview (troca de idioma/tema confirmadas funcionando). Antes de considerar o projeto "pronto", depois que o usuário passar as credenciais do Supabase: rodar `supabase/schema.sql` no projeto novo, seedar o departamento "Qualidade" + os 20 usuários (manualmente ou construindo um seed SQL), testar o login de verdade, testar CRUD de atividade, testar o dashboard com dado real, e só então rodar `scripts/migrate-spreadsheet.mjs --commit`.
+**As 6 fases do roadmap original estão implementadas E testadas de ponta a ponta contra o Supabase real** (2026-08-13). Projeto Supabase criado (`qualidadestreaming` org, ref `dqjwwllmddrgadjoypbx`), `.env.local` com as 4 chaves reais, `schema.sql` rodado com sucesso, `seed_qualidade.sql` rodado (departamento Qualidade + 20 colaboradores + 1 conta "Teste Gestor" pra validar o admin). Testado manualmente no browser: login em 2 passos, RLS lendo/escrevendo (criou e depois removeu uma atividade de teste), dashboard com KPIs/gráficos, troca de idioma em tempo real (PT→EN sem reload), painel de admin acessível a gestor e corretamente bloqueado pra colaborador. Sem erros no console em nenhuma tela.
+
+**GitHub push resolvido**: usuário gerou um Personal Access Token fine-grained a partir de uma conta com acesso de escrita ao repo (não a `israeloliveira12`, que continua sem permissão) e todos os commits foram enviados. O token foi usado uma única vez via um arquivo de credenciais temporário (removido logo depois) — não ficou salvo em lugar nenhum do repo.
+
+**Bug real encontrado e corrigido nessa sessão**: `crypt()`/`gen_salt()` (pgcrypto) davam "function does not exist" no projeto Supabase novo, porque extensões novas instalam no schema `extensions`, não em `public`. Corrigido qualificando todas as chamadas (`extensions.crypt(...)`, `extensions.gen_salt(...)`) em `login_department`, `set_department_password` e `create_department`. Se algum dia recriar o projeto do zero, o `schema.sql` atual já está com o fix — não precisa repetir esse processo de descoberta.
+
+**O que ainda falta**:
+1. Rodar `scripts/migrate-spreadsheet.mjs --commit` de verdade (só foi testado em dry-run) — decisões pendentes de status/on_going-vs-ready pro dado migrado, ver seção Fase 5.
+2. Decidir quem é o gestor real da Qualidade e promover essa pessoa via painel de Admin (`/app/admin` → aba Usuários) — hoje só existe a conta de teste **"Teste Gestor"** no banco (criada por mim pra validar o painel; pode ser renomeada/removida quando o gestor real for definido).
+3. Trocar a senha do departamento Qualidade (hoje é `teste123`, temporária) via painel de Admin → aba "Senha do departamento".
+4. Deploy na Vercel (nunca configurado).
+5. Logo real do Grupo Multilaser (segue como chip de texto, ver seção de identidade visual).
 
 ## Stack
 
 - **Frontend**: Next.js 16 (App Router, TypeScript) — satisfaz o pedido de "14+"
 - **UI**: Tailwind CSS v4 + shadcn/ui (base Radix, preset Nova)
 - **Gráficos**: Recharts
-- **Backend/DB**: Supabase (Postgres + RLS) — projeto ainda não criado, ver "Pendências" abaixo
+- **Backend/DB**: Supabase (Postgres + RLS) — projeto real conectado (`qualidadestreaming` org, ref `dqjwwllmddrgadjoypbx`), schema+RLS testados
 - **Deploy**: Vercel (ainda não conectado)
 - **i18n**: next-intl, **sem roteamento por locale** (sem segmento `[locale]` na URL) — ver seção própria abaixo
 - **Tema claro/escuro**: next-themes, toggle na topbar, persistido em `localStorage` (por navegador/dispositivo)
 - **Formulários**: react-hook-form + zod (o componente `form` do shadcn/ui não está disponível nesta versão do CLI para este stack — formulários são montados manualmente com esses dois pacotes, usando `Controller` para os campos `Select`)
 
-Repositório GitHub: `https://github.com/qualidadestreaming/to-do-list` (remoto `origin` já configurado localmente). **Push só com confirmação explícita do usuário** (regra permanente). Ele tentou uma vez me dar um Personal Access Token da própria conta (`israeloliveira12`), mas essa conta não tem permissão de escrita no repo (403) — ele optou por "ficar só local por enquanto" em vez de resolver o acesso agora. Enquanto isso não for resolvido, os commits ficam empilhados localmente — não tente `push` de novo sem ele pedir/resolver o acesso primeiro.
+Repositório GitHub: `https://github.com/qualidadestreaming/to-do-list` (remoto `origin`, branch `main`, push funcionando). **Push só com confirmação explícita do usuário a cada vez** (regra permanente, mesmo já tendo funcionado uma vez). A conta `israeloliveira12` (usada localmente pro `git config user`) **não** tem permissão de escrita no repo (testado, 403) — o push que funcionou usou um token de uma conta diferente, com acesso real, gerado sob demanda e descartado depois de usar. Se pedir push de novo e o `git push` direto falhar com 403, é esperado — é preciso um novo token de uma conta com acesso (ou o usuário roda o push manualmente).
 
 ## Identidade visual (padrão oficial Grupo Multilaser)
 
@@ -40,7 +51,7 @@ Tokens em `src/app/globals.css`, sempre usados via classes Tailwind (`bg-primary
 
 ## Modelo de dados (`supabase/schema.sql`)
 
-Fonte da verdade "fresh install" — cole o arquivo inteiro no SQL Editor de um projeto Supabase novo. **Ainda não existe projeto Supabase conectado** (ver "Pendências") — `.env.local` tem valores placeholder só para o `next build`/`next dev` não quebrar; nenhuma tela foi testada contra dados reais ainda.
+Fonte da verdade "fresh install" — cole o arquivo inteiro no SQL Editor de um projeto Supabase novo (já inclui o fix de `extensions.crypt`/`extensions.gen_salt`, ver "Estado atual"). Projeto real conectado e schema já rodado nele.
 
 - **`departments`**: `id, name, slug, password_hash, manager_user_id (nullable), created_at`. `manager_user_id` referencia `users(id)` — FK adicionada só depois de criar `users` (referência circular). Fica `null` até o usuário definir quem é o gestor da Qualidade (pendência aberta, ver abaixo).
 - **`users`**: `id, department_id, name, role ('colaborador'|'gestor'), active, created_at`. Sem login/senha individual.
@@ -77,17 +88,16 @@ Requisito do prompt original: troca de idioma **sem reload forçado**. Isso desc
 - **Erros vindos de Server Actions são traduzidos no client, não no servidor**: toda action (`auth-actions.ts`, `activity-actions.ts`) retorna um `errorCode` (string enum, ex: `"invalid_credentials"`), nunca uma mensagem pronta. O client mapeia o código pra texto via `useTranslations()` (ver `src/lib/i18n/activity-errors.ts` para atividades, e o `translateError()` inline em `login-form.tsx` para auth). **Nunca volte a colocar string literal em português num `return { ok:false, error: "..." }` de uma action** — isso quebra a tradução pros outros 2 idiomas silenciosamente.
 - **Escopo cortado por tempo**: as mensagens de validação client-side do `zod` (`src/lib/validation/activity.ts`, ex: `"Descreva a atividade."`) **continuam fixas em português**, independente do idioma escolhido. Resolver isso direito exigiria schemas por idioma (ou um mapa de tradução de `issue.code`/`path` pra chave i18n) — não implementado. Se o usuário notar/reclamar, é o próximo item óbvio de polish.
 - Arquivos de mensagem: `src/lib/i18n/messages/{pt,en,zh}.json` — pt.json é a fonte "canônica" (escrita primeiro), en/zh são traduções fiéis da mesma estrutura de chaves. **Sempre que adicionar uma chave nova, adicione nos 3 arquivos** — não há fallback automático (`useTranslations` do next-intl lança erro em dev se a chave não existir no idioma ativo).
-- Testado manualmente no preview: troca PT→EN sem navegação (confirmado por URL/cookie/DOM inalterados exceto o texto), tema claro/escuro com contraste correto nos dois.
+- Testado manualmente contra o Supabase real: troca PT→EN sem navegação no Dashboard (confirmado por URL inalterada, texto trocando instantaneamente), login/atividades/admin todos renderizando em PT por padrão sem chave faltando.
 
 ## Pendências / decisões em aberto (não inventar, perguntar antes)
 
-1. **Gestor do departamento Qualidade**: usuário disse "a definir" — `manager_user_id` fica `null` até ele decidir. Bloqueia só a Fase 5 (seed).
-2. **Projeto Supabase real ainda não existe.** Usuário vai criar e passar as chaves (`.env.local.example` documenta o que é preciso). **Nenhuma tela foi testada contra dado real** — toda validação até agora foi `npm run build` (TypeScript limpo) + inspeção manual da lógica + smoke test das telas públicas (login) no preview. Isso é uma lacuna real, não só formalidade: bugs de RLS/integração só aparecem com banco de verdade.
-3. **Identificação "quem sou eu" após login de departamento** (Fase 1): inferência minha, nunca confirmada explicitamente — ver seção de autenticação acima.
-4. **Reabrir atividade (`reopenActivity`)**: adicionado por mim como complemento natural de "concluir", não pedido explicitamente — ver seção "Máquina de estados".
-5. **Repositório GitHub**: existe, remoto configurado, mas a conta `israeloliveira12` não tem permissão de push (testado, 403). Usuário optou por não resolver agora — **não tente `git push` sem ele pedir de novo**, os commits ficam só locais até lá.
-6. **Mensagens de validação do zod não traduzem** (ver seção i18n acima) — gap conhecido, não implementado por escopo/tempo.
-7. **Sem teste end-to-end de nenhuma tela que depende de dado** (Atividades, Dashboard) — só a tela de Login foi de fato clicada no preview (sem Supabase real, então só a parte estática/i18n/tema foi validada ali também).
+1. **Gestor do departamento Qualidade**: usuário disse "a definir" — `manager_user_id` fica `null`. Existe uma conta de teste **"Teste Gestor"** (role `gestor`) no banco só pra validar o painel de Admin; quando o usuário decidir quem é o gestor real, promover essa pessoa (ou renomear a conta de teste) via `/app/admin`.
+2. **Identificação "quem sou eu" após login de departamento** (Fase 1): inferência minha, nunca confirmada explicitamente — ver seção de autenticação acima. Testado e funcionando, mas a UX em si (escolher nome numa lista após a senha) não foi validada com o usuário.
+3. **Reabrir atividade (`reopenActivity`)**: adicionado por mim como complemento natural de "concluir", não pedido explicitamente — ver seção "Máquina de estados".
+4. **Mensagens de validação do zod não traduzem** (ver seção i18n acima) — gap conhecido, não implementado por escopo/tempo.
+5. **Senha do departamento Qualidade** ainda é a temporária `teste123` (seed de teste) — trocar via Admin antes de considerar o ambiente pronto para uso real.
+6. **`scripts/migrate-spreadsheet.mjs` não rodou com `--commit` ainda** — só dry-run. Ver seção Fase 5 para a decisão em aberto sobre status `on_going` vs `ready` no dado migrado.
 
 ## Fases
 
@@ -153,6 +163,7 @@ Lê a planilha original, classifica cada linha (finalizada / ativa / ambígua), 
 - `src/lib/dashboard-metrics.ts` — cálculos puros do Dashboard (KPIs, distribuições), sem rótulo (idem).
 - `src/components/activities/` / `src/components/dashboard/` / `src/components/shell/` / `src/components/auth/` — componentes de cada área, todos `"use client"`.
 - `src/types/database.ts` — tipos manuais espelhando o schema (regenerar via `supabase gen types` assim que o projeto existir). **Atenção**: os tipos de linha (`Department`, `AppUser`, `Activity`, `ActivityFollowUp`) precisam ser `type`, nunca `interface` — ver comentário no topo do arquivo (interfaces não satisfazem o `Record<string, unknown>` que o supabase-js exige para `.rpc()`/`.from()` não colapsar em `never`; bug real que já aconteceu e foi corrigido nesta sessão).
-- `.env.local.example` — todas as variáveis de ambiente necessárias, com onde encontrar cada uma no painel do Supabase. `.env.local` (gitignored) tem valores placeholder pra build/dev não quebrarem sem projeto real.
+- `.env.local.example` — todas as variáveis de ambiente necessárias, com onde encontrar cada uma no painel do Supabase. `.env.local` (gitignored) tem as chaves reais do projeto `qualidadestreaming`/`dqjwwllmddrgadjoypbx`. **Atenção ao JWT secret**: o Supabase migrou pra chaves de assinatura assimétricas (ECC) por padrão — o valor usado aqui é o **"Legacy JWT Secret"** (aba separada em Project Settings → JWT Keys), que ainda funciona para verificar tokens HS256 assinados manualmente. Se um dia o Supabase descontinuar de vez o legacy secret, `src/lib/auth/session.ts` (assinatura HS256 própria) precisa ser revisto.
+- `supabase/seed_qualidade.sql` — seed do departamento Qualidade + 20 colaboradores + conta "Teste Gestor", já rodado no projeto real.
 - `scripts/migrate-spreadsheet.mjs` — migração da planilha (Fase 5), dry-run por padrão. Lê `.env.local` manualmente (não passa pelo Next.js).
 - `src/components/admin/` / `src/lib/actions/admin-actions.ts` — painel de administração (Fase 6): usuários, senha do departamento, novo departamento.
