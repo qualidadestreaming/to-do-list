@@ -38,6 +38,13 @@
  * SAÍDA: dois arquivos CSV em scripts/migration-output/ com timestamp:
  *   - migrated_<ts>.csv        linhas que seriam/foram inseridas
  *   - manual_review_<ts>.csv   linhas puladas, com o motivo
+ *
+ * Decisão confirmada com o usuário em 2026-08-14: linhas marcadas como
+ * finalizadas na planilha ("Good"/"Concluído.../Finalizado/Closed) também
+ * são migradas — como atividade com status "closed" e completed_date igual
+ * à coluna "Realizado". Não é mais um universo só de trabalho aberto, é o
+ * histórico completo. Uma linha finalizada sem data em "Realizado" cai em
+ * revisão manual (nunca fabrica uma data de conclusão).
  */
 
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -281,7 +288,8 @@ async function main() {
 
   const migrated = [];
   const manualReview = [];
-  let skippedFinished = 0;
+  let migratedFinished = 0;
+  let migratedActive = 0;
 
   for (const sheetName of sheetNames) {
     if (EXCLUDED_OWNERS.has(normalize(sheetName))) {
@@ -310,6 +318,7 @@ async function main() {
       tendencia: col(header, "Tendência", "T"),
       dono: col(header, "Dono"),
       fup: col(header, "F´UP", "F'UP", "FUP", "Follow Up"),
+      realizado: col(header, "Realizado"),
       status: col(header, "Status"),
       performance: col(header, "Performance"),
     };
@@ -336,10 +345,6 @@ async function main() {
       const rowLabel = `${sheetName}!${r + 1}`;
 
       const statusInfo = classifyStatus(row[idx.status], row[idx.performance]);
-      if (statusInfo.kind === "finished") {
-        skippedFinished++;
-        continue;
-      }
       if (statusInfo.kind === "ambiguous" || statusInfo.kind === "unknown") {
         manualReview.push({ sheet: sheetName, row: rowLabel, reason: `Status ambíguo: ${statusInfo.detail}`, title });
         continue;
@@ -374,7 +379,35 @@ async function main() {
         continue;
       }
 
-      const status = args.statusRule === "always-ready" ? "ready" : dueDate ? "on_going" : "ready";
+      let status;
+      let completedDate = null;
+      if (statusInfo.kind === "finished") {
+        // "Good"/"Concluído .../etc = concluída (confirmado pelo usuário em
+        // 2026-08-14) — migra como histórico fechado, não só o trabalho aberto.
+        completedDate = excelDateToISO(row[idx.realizado]);
+        if (!completedDate) {
+          manualReview.push({
+            sheet: sheetName,
+            row: rowLabel,
+            reason: "Marcada como concluída na planilha, mas sem data em Realizado",
+            title,
+          });
+          continue;
+        }
+        if (completedDate < startDate) {
+          manualReview.push({
+            sheet: sheetName,
+            row: rowLabel,
+            reason: `Data de Realizado (${completedDate}) anterior ao Início (${startDate})`,
+            title,
+          });
+          continue;
+        }
+        status = "closed";
+      } else {
+        status = args.statusRule === "always-ready" ? "ready" : dueDate ? "on_going" : "ready";
+      }
+
       const note = String(row[idx.fup] ?? "").trim();
 
       migrated.push({
@@ -384,6 +417,7 @@ async function main() {
         title,
         start_date: startDate,
         due_date: dueDate ?? "",
+        completed_date: completedDate ?? "",
         gravidade,
         urgencia,
         tendencia,
@@ -391,6 +425,8 @@ async function main() {
         status,
         note,
       });
+      if (status === "closed") migratedFinished++;
+      else migratedActive++;
 
       if (args.commit) {
         const { data: activity, error } = await supabase
@@ -401,6 +437,7 @@ async function main() {
             title,
             start_date: startDate,
             due_date: dueDate,
+            completed_date: completedDate,
             gravidade,
             urgencia,
             tendencia,
@@ -412,6 +449,8 @@ async function main() {
         if (error || !activity) {
           manualReview.push({ sheet: sheetName, row: rowLabel, reason: `Falha no insert: ${error?.message}`, title });
           migrated.pop();
+          if (status === "closed") migratedFinished--;
+          else migratedActive--;
           continue;
         }
 
@@ -444,7 +483,7 @@ async function main() {
   writeFileSync(
     migratedPath,
     toCsv(migrated, [
-      "sheet", "row", "owner", "title", "start_date", "due_date",
+      "sheet", "row", "owner", "title", "start_date", "due_date", "completed_date",
       "gravidade", "urgencia", "tendencia", "priority", "status", "note",
     ]),
     "utf-8"
@@ -455,7 +494,8 @@ async function main() {
 
   console.log(`\n=== Resumo ===`);
   console.log(`Migradas (ou prontas para migrar): ${migrated.length}`);
-  console.log(`Já finalizadas na planilha, ignoradas: ${skippedFinished}`);
+  console.log(`  - Abertas (ready/on_going): ${migratedActive}`);
+  console.log(`  - Já concluídas na planilha, migradas como histórico: ${migratedFinished}`);
   console.log(`Em revisão manual: ${manualReview.length}`);
   console.log(`\nRelatórios salvos em:\n  ${migratedPath}\n  ${reviewPath}`);
   if (!args.commit) {

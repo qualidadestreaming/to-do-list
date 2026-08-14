@@ -12,7 +12,10 @@ export default async function DashboardPage() {
 
   const [{ data: activities, error: activitiesError }, { data: users, error: usersError }] =
     await Promise.all([
-      supabase.from("activities").select("*"),
+      // .range() é necessário — sem isso o PostgREST corta silenciosamente em
+      // 1000 linhas (default do Supabase), invisível até o departamento
+      // passar dessa marca (aconteceu de verdade na migração de histórico).
+      supabase.from("activities").select("*").range(0, 9999),
       supabase.from("users").select("*").eq("active", true).order("name"),
     ]);
 

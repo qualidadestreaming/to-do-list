@@ -12,7 +12,9 @@ export default async function AtividadesPage() {
 
   const [{ data: activities, error: activitiesError }, { data: users, error: usersError }] =
     await Promise.all([
-      supabase.from("activities").select("*").order("priority", { ascending: false }),
+      // .range() é necessário — sem isso o PostgREST corta silenciosamente em
+      // 1000 linhas (default do Supabase).
+      supabase.from("activities").select("*").order("priority", { ascending: false }).range(0, 9999),
       supabase.from("users").select("*").eq("active", true).order("name"),
     ]);
 
