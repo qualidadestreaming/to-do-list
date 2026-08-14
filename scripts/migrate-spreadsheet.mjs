@@ -116,6 +116,24 @@ const supabase =
     ? createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false } })
     : null;
 
+// Pessoas que saíram da empresa (confirmado pelo usuário em 2026-08-14) — as
+// abas delas são ignoradas por completo, como se não existissem na planilha
+// (nem entram no relatório de revisão manual, é uma exclusão intencional).
+const EXCLUDED_OWNERS = new Set(
+  ["Josiele", "Victor", "Oseas", "Anderson", "Wilson Rocha", "George", "Alfredo", "Adria"].map(
+    normalize
+  )
+);
+
+// Nome da aba na planilha nem sempre bate com o nome atual da pessoa no
+// banco (ex: apelido corrigido depois do cadastro inicial). Mapeia aqui
+// quando isso acontecer, em vez de renomear a aba na planilha original.
+const OWNER_NAME_ALIASES = new Map([[normalize("AlexandreSS"), "Alexandre"]]);
+
+function resolveOwnerLookupName(sheetName) {
+  return OWNER_NAME_ALIASES.get(normalize(sheetName)) ?? sheetName;
+}
+
 // ---------------------------------------------------------------------------
 // Normalização de texto (tira acento, minúsculo, colapsa espaço/pontuação)
 // ---------------------------------------------------------------------------
@@ -244,7 +262,8 @@ async function main() {
     const { data: users, error: usersError } = await supabase
       .from("users")
       .select("id, name")
-      .eq("department_id", departmentId);
+      .eq("department_id", departmentId)
+      .eq("active", true);
 
     if (usersError) {
       console.error("Erro ao buscar usuários do departamento:", usersError);
@@ -261,6 +280,11 @@ async function main() {
   let skippedFinished = 0;
 
   for (const sheetName of sheetNames) {
+    if (EXCLUDED_OWNERS.has(normalize(sheetName))) {
+      console.log(`  [ignorada] aba "${sheetName}" — pessoa não faz mais parte da empresa.`);
+      continue;
+    }
+
     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
       header: 1,
       defval: "",
@@ -287,8 +311,10 @@ async function main() {
     };
 
     // O dono "de verdade" é o nome da própria aba — mais confiável que a
-    // coluna "Dono" (texto livre, pode ter sobrenome, apelido, etc.).
-    const ownerId = userIdByName.get(normalize(sheetName));
+    // coluna "Dono" (texto livre, pode ter sobrenome, apelido, etc.), exceto
+    // quando há um alias cadastrado (ver OWNER_NAME_ALIASES).
+    const ownerLookupName = resolveOwnerLookupName(sheetName);
+    const ownerId = userIdByName.get(normalize(ownerLookupName));
     if (args.commit && !ownerId) {
       manualReview.push({
         sheet: sheetName,
