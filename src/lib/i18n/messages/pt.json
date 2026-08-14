@@ -91,9 +91,12 @@
       "priority": "Prioridade",
       "allPriorities": "Toda prioridade",
       "sort": "Ordenar",
+      "sortCreatedDesc": "Cadastradas mais recentes",
+      "sortCreatedAsc": "Cadastradas mais antigas",
       "sortPriorityDesc": "Maior prioridade primeiro",
       "sortPriorityAsc": "Menor prioridade primeiro",
-      "sortDueDate": "Prazo mais próximo"
+      "sortDueDate": "Prazo mais próximo",
+      "sortDueDateDesc": "Prazo mais distante"
     },
     "status": {
       "ready": "Pronta",

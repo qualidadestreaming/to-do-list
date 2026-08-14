@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, LabelList, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { PerformanceDatum } from "@/lib/dashboard-metrics";
@@ -38,14 +38,39 @@ export function PerformanceRankingChart({ data }: { data: PerformanceDatum[] }) 
                 stackId="perf"
                 fill="var(--status-closed-foreground)"
                 radius={[0, 0, 0, 0]}
-              />
+              >
+                <LabelList
+                  dataKey="onTime"
+                  position="center"
+                  fill="var(--card)"
+                  fontSize={12}
+                  fontWeight={700}
+                  formatter={(value) => (Number(value) > 0 ? value : "")}
+                />
+              </Bar>
               <Bar
                 dataKey="late"
                 name={t("late")}
                 stackId="perf"
                 fill="var(--status-overdue-foreground)"
                 radius={[0, 4, 4, 0]}
-              />
+              >
+                <LabelList
+                  dataKey="late"
+                  position="center"
+                  fill="var(--card)"
+                  fontSize={12}
+                  fontWeight={700}
+                  formatter={(value) => (Number(value) > 0 ? value : "")}
+                />
+                <LabelList
+                  dataKey="total"
+                  position="right"
+                  fill="var(--foreground)"
+                  fontSize={12}
+                  fontWeight={700}
+                />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         ) : (

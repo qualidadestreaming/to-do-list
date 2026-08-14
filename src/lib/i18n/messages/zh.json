@@ -91,9 +91,12 @@
       "priority": "优先级",
       "allPriorities": "所有优先级",
       "sort": "排序",
+      "sortCreatedDesc": "最新创建",
+      "sortCreatedAsc": "最早创建",
       "sortPriorityDesc": "优先级从高到低",
       "sortPriorityAsc": "优先级从低到高",
-      "sortDueDate": "最近截止日期"
+      "sortDueDate": "最近截止日期",
+      "sortDueDateDesc": "最远截止日期"
     },
     "status": {
       "ready": "待处理",

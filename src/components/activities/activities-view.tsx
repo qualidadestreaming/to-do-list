@@ -32,7 +32,13 @@ import type { GutBandKey } from "@/lib/gut";
 import { cn } from "@/lib/utils";
 
 type StatusFilter = "all" | ActivityStatus | "overdue";
-type SortOption = "priority_desc" | "priority_asc" | "due_date_asc";
+type SortOption =
+  | "created_desc"
+  | "created_asc"
+  | "priority_desc"
+  | "priority_asc"
+  | "due_date_asc"
+  | "due_date_desc";
 type Scope = "minhas" | "todas";
 
 function formatDate(iso: string | null) {
@@ -64,7 +70,7 @@ export function ActivitiesView({
   const [ownerFilter, setOwnerFilter] = useState<string>("all");
   const [bandFilter, setBandFilter] = useState<GutBandKey | "all">("all");
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<SortOption>("priority_desc");
+  const [sort, setSort] = useState<SortOption>("created_desc");
 
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -103,13 +109,17 @@ export function ActivitiesView({
     }
 
     const sorted = [...list].sort((a, b) => {
+      if (sort === "created_desc") return b.created_at.localeCompare(a.created_at);
+      if (sort === "created_asc") return a.created_at.localeCompare(b.created_at);
       if (sort === "priority_desc") return b.priority - a.priority;
       if (sort === "priority_asc") return a.priority - b.priority;
-      // due_date_asc: sem prazo vai para o final
+      // due_date_*: sem prazo sempre vai para o final, independente da direção
       if (!a.due_date && !b.due_date) return 0;
       if (!a.due_date) return 1;
       if (!b.due_date) return -1;
-      return a.due_date.localeCompare(b.due_date);
+      return sort === "due_date_desc"
+        ? b.due_date.localeCompare(a.due_date)
+        : a.due_date.localeCompare(b.due_date);
     });
 
     return sorted;
@@ -210,9 +220,12 @@ export function ActivitiesView({
             <SelectValue placeholder={t("filters.sort")} />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="created_desc">{t("filters.sortCreatedDesc")}</SelectItem>
+            <SelectItem value="created_asc">{t("filters.sortCreatedAsc")}</SelectItem>
             <SelectItem value="priority_desc">{t("filters.sortPriorityDesc")}</SelectItem>
             <SelectItem value="priority_asc">{t("filters.sortPriorityAsc")}</SelectItem>
             <SelectItem value="due_date_asc">{t("filters.sortDueDate")}</SelectItem>
+            <SelectItem value="due_date_desc">{t("filters.sortDueDateDesc")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

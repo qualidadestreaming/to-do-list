@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ClosureDatum } from "@/lib/dashboard-metrics";
@@ -28,7 +28,15 @@ export function ClosuresByOwnerChart({ data }: { data: ClosureDatum[] }) {
                 stroke="var(--muted-foreground)"
               />
               <Tooltip cursor={{ fill: "var(--muted)" }} />
-              <Bar dataKey="count" fill="var(--brand-purple)" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="count" fill="var(--brand-purple)" radius={[0, 4, 4, 0]}>
+                <LabelList
+                  dataKey="count"
+                  position="right"
+                  fill="var(--foreground)"
+                  fontSize={12}
+                  fontWeight={700}
+                />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         ) : (

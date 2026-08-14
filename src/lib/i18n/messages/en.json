@@ -91,9 +91,12 @@
       "priority": "Priority",
       "allPriorities": "All priorities",
       "sort": "Sort",
+      "sortCreatedDesc": "Most recently added",
+      "sortCreatedAsc": "Oldest added",
       "sortPriorityDesc": "Highest priority first",
       "sortPriorityAsc": "Lowest priority first",
-      "sortDueDate": "Nearest due date"
+      "sortDueDate": "Nearest due date",
+      "sortDueDateDesc": "Furthest due date"
     },
     "status": {
       "ready": "Ready",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Cell, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { GutBandDatum } from "@/lib/dashboard-metrics";
@@ -35,6 +35,13 @@ export function GutBandChart({ data }: { data: GutBandDatum[] }) {
                 {chartData.map((entry) => (
                   <Cell key={entry.key} fill={COLORS[entry.key]} />
                 ))}
+                <LabelList
+                  dataKey="value"
+                  position="top"
+                  fill="var(--foreground)"
+                  fontSize={12}
+                  fontWeight={700}
+                />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
