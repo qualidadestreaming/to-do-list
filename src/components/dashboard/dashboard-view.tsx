@@ -13,10 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { KpiCards } from "@/components/dashboard/kpi-cards";
+import { GutPanorama } from "@/components/dashboard/gut-panorama";
 import { StatusDistributionChart } from "@/components/dashboard/status-distribution-chart";
 import { GutBandChart } from "@/components/dashboard/gut-band-chart";
 import { PerformanceRankingChart } from "@/components/dashboard/performance-ranking-chart";
+import { ClosuresByOwnerChart } from "@/components/dashboard/closures-by-owner-chart";
 import {
+  computeClosuresByOwner,
   computeGutBandDistribution,
   computeKpis,
   computePerformanceByOwner,
@@ -24,16 +27,24 @@ import {
 } from "@/lib/dashboard-metrics";
 import type { Activity, ActivityStatus, AppUser } from "@/types/database";
 import type { GutBandKey } from "@/lib/gut";
+import { cn } from "@/lib/utils";
 
 type StatusFilter = "all" | ActivityStatus | "overdue";
+type Scope = "geral" | "pessoal";
 
 export function DashboardView({
   activities,
   users,
+  currentUserId,
+  currentUserName,
+  departmentName,
   loadError,
 }: {
   activities: Activity[];
   users: AppUser[];
+  currentUserId: string;
+  currentUserName: string;
+  departmentName: string;
   loadError?: boolean;
 }) {
   const t = useTranslations("dashboard");
@@ -41,15 +52,21 @@ export function DashboardView({
   const tStatus = useTranslations("activities.status");
   const tGut = useTranslations("activities.gutBands");
 
+  const [scope, setScope] = useState<Scope>("geral");
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [bandFilter, setBandFilter] = useState<GutBandKey | "all">("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
+  const scoped = useMemo(
+    () => (scope === "pessoal" ? activities.filter((a) => a.owner_user_id === currentUserId) : activities),
+    [activities, scope, currentUserId]
+  );
+
   const filtered = useMemo(() => {
-    return activities.filter((a) => {
-      if (ownerFilter !== "all" && a.owner_user_id !== ownerFilter) return false;
+    return scoped.filter((a) => {
+      if (scope === "geral" && ownerFilter !== "all" && a.owner_user_id !== ownerFilter) return false;
       if (statusFilter === "overdue") {
         const overdue = a.due_date && a.status !== "closed" && a.due_date < new Date().toISOString().slice(0, 10);
         if (!overdue) return false;
@@ -65,7 +82,7 @@ export function DashboardView({
       if (toDate && a.start_date > toDate) return false;
       return true;
     });
-  }, [activities, ownerFilter, statusFilter, bandFilter, fromDate, toDate]);
+  }, [scoped, scope, ownerFilter, statusFilter, bandFilter, fromDate, toDate]);
 
   const kpis = useMemo(() => computeKpis(filtered), [filtered]);
   const statusData = useMemo(() => computeStatusDistribution(filtered), [filtered]);
@@ -74,10 +91,35 @@ export function DashboardView({
     () => computePerformanceByOwner(filtered, users),
     [filtered, users]
   );
+  const closuresData = useMemo(() => computeClosuresByOwner(filtered, users), [filtered, users]);
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
+        <div className="inline-flex gap-0.5 rounded-lg border bg-card p-0.5">
+          {(["geral", "pessoal"] as Scope[]).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setScope(s)}
+              className={cn(
+                "rounded-md px-3.5 py-1.5 text-sm font-semibold transition-colors",
+                scope === s
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {t(`scope.${s === "geral" ? "general" : "personal"}`)}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="-mt-2 text-xs text-muted-foreground">
+        {scope === "geral"
+          ? t("scope.generalHint", { department: departmentName })
+          : t("scope.personalHint", { name: currentUserName })}
+      </p>
 
       {loadError && (
         <Alert variant="destructive">
@@ -86,22 +128,24 @@ export function DashboardView({
       )}
 
       <div className="flex flex-wrap items-end gap-3 rounded-xl border bg-card p-3">
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">{t("filters.owner")}</Label>
-          <Select value={ownerFilter} onValueChange={setOwnerFilter}>
-            <SelectTrigger className="w-44">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{tCommon("all")}</SelectItem>
-              {users.map((u) => (
-                <SelectItem key={u.id} value={u.id}>
-                  {u.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {scope === "geral" && (
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">{t("filters.owner")}</Label>
+            <Select value={ownerFilter} onValueChange={setOwnerFilter}>
+              <SelectTrigger className="w-44">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{tCommon("all")}</SelectItem>
+                {users.map((u) => (
+                  <SelectItem key={u.id} value={u.id}>
+                    {u.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <div className="space-y-1">
           <Label className="text-xs text-muted-foreground">{t("filters.status")}</Label>
           <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
@@ -143,12 +187,17 @@ export function DashboardView({
 
       <KpiCards kpis={kpis} />
 
+      <GutPanorama activities={filtered} />
+
       <div className="grid gap-4 lg:grid-cols-2">
         <StatusDistributionChart data={statusData} />
         <GutBandChart data={bandData} />
       </div>
 
-      <PerformanceRankingChart data={performanceData} />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <ClosuresByOwnerChart data={closuresData} />
+        <PerformanceRankingChart data={performanceData} />
+      </div>
     </div>
   );
 }

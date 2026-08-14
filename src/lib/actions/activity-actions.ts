@@ -23,7 +23,8 @@ export type ActivityErrorCode =
   | "close_failed"
   | "reopen_failed"
   | "follow_up_failed"
-  | "delete_failed";
+  | "delete_failed"
+  | "reassign_failed";
 
 type ActionResult =
   | { ok: true }
@@ -118,6 +119,21 @@ export async function updateActivity(
     });
   }
 
+  revalidatePath(ACTIVITIES_PATH);
+  return { ok: true };
+}
+
+export async function reassignActivity(activityId: string, newOwnerId: string): Promise<ActionResult> {
+  const supabase = await createSessionClient();
+  const { error } = await supabase
+    .from("activities")
+    .update({ owner_user_id: newOwnerId })
+    .eq("id", activityId);
+
+  if (error) {
+    console.error("reassignActivity", error);
+    return { ok: false, errorCode: "reassign_failed" };
+  }
   revalidatePath(ACTIVITIES_PATH);
   return { ok: true };
 }

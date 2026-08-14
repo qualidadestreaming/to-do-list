@@ -22,6 +22,9 @@ export default async function DashboardPage() {
     <DashboardView
       activities={(activities ?? []) as Activity[]}
       users={(users ?? []) as AppUser[]}
+      currentUserId={session.userId}
+      currentUserName={session.userName}
+      departmentName={session.departmentName}
       loadError={hasError}
     />
   );

@@ -23,14 +23,17 @@ import {
 } from "@/components/ui/dialog";
 import { ActivityForm } from "@/components/activities/activity-form";
 import { ActivityDetailDialog } from "@/components/activities/activity-detail-dialog";
+import { AssignPopover } from "@/components/activities/assign-popover";
 import { PriorityBadge } from "@/components/activities/priority-badge";
 import { StatusBadge, isOverdue } from "@/components/activities/status-badge";
 import { createActivity } from "@/lib/actions/activity-actions";
 import type { Activity, ActivityStatus, AppUser } from "@/types/database";
 import type { GutBandKey } from "@/lib/gut";
+import { cn } from "@/lib/utils";
 
 type StatusFilter = "all" | ActivityStatus | "overdue";
 type SortOption = "priority_desc" | "priority_asc" | "due_date_asc";
+type Scope = "minhas" | "todas";
 
 function formatDate(iso: string | null) {
   if (!iso) return "—";
@@ -41,6 +44,7 @@ function formatDate(iso: string | null) {
 export function ActivitiesView({
   initialActivities,
   users,
+  currentUserId,
   loadError,
 }: {
   initialActivities: Activity[];
@@ -55,6 +59,7 @@ export function ActivitiesView({
   const tGut = useTranslations("activities.gutBands");
   const activities = initialActivities;
 
+  const [scope, setScope] = useState<Scope>("todas");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [ownerFilter, setOwnerFilter] = useState<string>("all");
   const [bandFilter, setBandFilter] = useState<GutBandKey | "all">("all");
@@ -66,8 +71,13 @@ export function ActivitiesView({
 
   const selectedActivity = activities.find((a) => a.id === selectedId) ?? null;
 
+  const scoped = useMemo(
+    () => (scope === "minhas" ? activities.filter((a) => a.owner_user_id === currentUserId) : activities),
+    [activities, scope, currentUserId]
+  );
+
   const filtered = useMemo(() => {
-    let list = activities;
+    let list = scoped;
 
     if (statusFilter === "overdue") {
       list = list.filter((a) => isOverdue(a.due_date, a.status));
@@ -75,7 +85,7 @@ export function ActivitiesView({
       list = list.filter((a) => a.status === statusFilter);
     }
 
-    if (ownerFilter !== "all") {
+    if (scope === "todas" && ownerFilter !== "all") {
       list = list.filter((a) => a.owner_user_id === ownerFilter);
     }
 
@@ -103,11 +113,7 @@ export function ActivitiesView({
     });
 
     return sorted;
-  }, [activities, statusFilter, ownerFilter, bandFilter, search, sort]);
-
-  function ownerName(id: string) {
-    return users.find((u) => u.id === id)?.name ?? "—";
-  }
+  }, [scoped, scope, statusFilter, ownerFilter, bandFilter, search, sort]);
 
   function handleChanged() {
     router.refresh();
@@ -121,6 +127,31 @@ export function ActivitiesView({
           <Plus className="size-4" />
           {t("newActivity")}
         </Button>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="inline-flex gap-0.5 rounded-lg border bg-card p-0.5">
+          {(["minhas", "todas"] as Scope[]).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setScope(s)}
+              className={cn(
+                "rounded-md px-3.5 py-1.5 text-sm font-semibold transition-colors",
+                scope === s
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {t(`scope.${s === "minhas" ? "mine" : "all"}`)}
+            </button>
+          ))}
+        </div>
+        <span className="text-xs text-muted-foreground">
+          {scope === "minhas"
+            ? t("scope.mineHint", { count: scoped.length })
+            : t("scope.allHint", { count: scoped.length })}
+        </span>
       </div>
 
       {loadError && (
@@ -148,19 +179,21 @@ export function ActivitiesView({
             <SelectItem value="overdue">{tStatus("overdueFilter")}</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={ownerFilter} onValueChange={setOwnerFilter}>
-          <SelectTrigger className="w-full sm:w-44">
-            <SelectValue placeholder={t("filters.owner")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("filters.allOwners")}</SelectItem>
-            {users.map((u) => (
-              <SelectItem key={u.id} value={u.id}>
-                {u.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {scope === "todas" && (
+          <Select value={ownerFilter} onValueChange={setOwnerFilter}>
+            <SelectTrigger className="w-full sm:w-44">
+              <SelectValue placeholder={t("filters.owner")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("filters.allOwners")}</SelectItem>
+              {users.map((u) => (
+                <SelectItem key={u.id} value={u.id}>
+                  {u.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <Select value={bandFilter} onValueChange={(v) => setBandFilter(v as GutBandKey | "all")}>
           <SelectTrigger className="w-full sm:w-40">
             <SelectValue placeholder={t("filters.priority")} />
@@ -206,8 +239,13 @@ export function ActivitiesView({
                   <td className="max-w-xs truncate px-4 py-3 font-medium text-foreground">
                     {activity.title}
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {ownerName(activity.owner_user_id)}
+                  <td className="px-4 py-3">
+                    <AssignPopover
+                      activityId={activity.id}
+                      ownerId={activity.owner_user_id}
+                      users={users}
+                      onChanged={handleChanged}
+                    />
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {formatDate(activity.due_date)}

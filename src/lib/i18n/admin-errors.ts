@@ -20,6 +20,8 @@ export function useAdminErrorTranslator() {
       change_password_failed: t("changePasswordFailed"),
       create_department_failed: t("createDepartmentFailed"),
       slug_taken: t("slugTaken"),
+      delete_user_failed: t("deleteUserFailed"),
+      delete_user_has_activities: t("deleteUserHasActivities"),
     };
     return map[result.errorCode];
   };

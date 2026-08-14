@@ -174,7 +174,11 @@ function classifyStatus(statusRaw, performanceRaw) {
   const s = normalize(statusRaw);
   const p = normalize(performanceRaw);
   const candidate = s || p;
-  if (!candidate) return { kind: "ambiguous", detail: "Status e Performance vazios" };
+  // Decisão confirmada com o usuário em 2026-08-14: algumas pessoas (Carla,
+  // Rosiane) nunca preencheram Status/Performance em nenhuma linha aberta.
+  // Como ninguém marcou como finalizado, entra como "active" — a pessoa
+  // revisa/fecha depois no app o que já não fizer mais sentido.
+  if (!candidate) return { kind: "active" };
   if (FINISHED_TOKENS.has(candidate)) return { kind: "finished" };
   if (ACTIVE_TOKENS.has(candidate)) return { kind: "active" };
   return { kind: "unknown", detail: `valor não reconhecido: "${candidate}"` };
@@ -301,9 +305,9 @@ async function main() {
       inicio: col(header, "Início"),
       prazo: col(header, "Prazo"),
       atividade: col(header, "Atividade"),
-      gravidade: col(header, "Gravidade"),
-      urgencia: col(header, "Urgência"),
-      tendencia: col(header, "Tendência"),
+      gravidade: col(header, "Gravidade", "G"),
+      urgencia: col(header, "Urgência", "U"),
+      tendencia: col(header, "Tendência", "T"),
       dono: col(header, "Dono"),
       fup: col(header, "F´UP", "F'UP", "FUP", "Follow Up"),
       status: col(header, "Status"),

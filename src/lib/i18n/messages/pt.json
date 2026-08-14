@@ -30,6 +30,20 @@
     "activities": "Atividades",
     "admin": "Administração"
   },
+  "sidebar": {
+    "department": "Departamento",
+    "collapse": "Recolher menu",
+    "expand": "Expandir menu",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "switchUser": "Trocar de usuário"
+  },
+  "switchUser": {
+    "title": "Trocar de usuário",
+    "subtitle": "Continua no departamento {department}, só troca quem está usando.",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar"
+  },
   "auth": {
     "subtitle": "Gestão de atividades prioritárias por departamento",
     "department": "Departamento",
@@ -56,6 +70,12 @@
     "newActivity": "Nova atividade",
     "searchPlaceholder": "Buscar atividade...",
     "noResults": "Nenhuma atividade encontrada.",
+    "scope": {
+      "mine": "Minhas atividades",
+      "all": "Todas as atividades",
+      "mineHint": "Só as atividades atribuídas a você · {count}",
+      "allHint": "Todas as atividades do departamento · {count}"
+    },
     "columns": {
       "activity": "Atividade",
       "owner": "Responsável",
@@ -135,6 +155,7 @@
       "reopenFailed": "Não foi possível reabrir a atividade.",
       "followUpFailed": "Não foi possível registrar a atualização.",
       "deleteFailed": "Não foi possível excluir a atividade.",
+      "reassignFailed": "Não foi possível reatribuir a atividade.",
       "sessionExpired": "Sessão expirada. Faça login novamente."
     }
   },
@@ -159,7 +180,10 @@
       "create": "Criar usuário",
       "createdToast": "Usuário criado.",
       "updatedToast": "Usuário atualizado.",
-      "noUsers": "Nenhum usuário cadastrado ainda."
+      "noUsers": "Nenhum usuário cadastrado ainda.",
+      "delete": "Excluir",
+      "confirmDelete": "Excluir {name} permanentemente? Isso só funciona se a pessoa nunca teve nenhuma atividade atribuída — caso contrário, desative em vez de excluir.",
+      "deletedToast": "Usuário excluído."
     },
     "password": {
       "title": "Trocar senha do departamento",
@@ -187,11 +211,23 @@
       "updateUserFailed": "Não foi possível salvar as alterações do usuário.",
       "changePasswordFailed": "Não foi possível trocar a senha agora.",
       "createDepartmentFailed": "Não foi possível criar o departamento.",
-      "slugTaken": "Esse identificador já está em uso — escolha outro."
+      "slugTaken": "Esse identificador já está em uso — escolha outro.",
+      "deleteUserFailed": "Não foi possível excluir o usuário agora.",
+      "deleteUserHasActivities": "Essa pessoa já tem atividades vinculadas — exclusão física quebraria o histórico. Desative em vez de excluir."
     }
   },
   "dashboard": {
     "title": "Dashboard",
+    "scope": {
+      "general": "Geral",
+      "personal": "Pessoal",
+      "generalHint": "Métricas do departamento inteiro ({department})",
+      "personalHint": "Só as suas atividades ({name})"
+    },
+    "panorama": {
+      "title": "Panorama de prioridade GUT",
+      "subtitle": "{count} atividades no filtro atual"
+    },
     "filters": {
       "owner": "Responsável",
       "status": "Status",
@@ -211,6 +247,8 @@
       "statusDistribution": "Distribuição por status",
       "gutDistribution": "Distribuição por faixa GUT",
       "performanceRanking": "Performance por responsável (concluídas no prazo × com atraso)",
+      "closuresByOwner": "Fechamento por pessoa",
+      "closuresByOwnerSubtitle": "Volume total de atividades concluídas",
       "onTime": "No prazo",
       "late": "Com atraso",
       "noData": "Sem dados para o filtro atual.",

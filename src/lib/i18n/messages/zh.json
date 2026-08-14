@@ -30,6 +30,20 @@
     "activities": "任务",
     "admin": "管理"
   },
+  "sidebar": {
+    "department": "部门",
+    "collapse": "收起菜单",
+    "expand": "展开菜单",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "switchUser": "切换用户"
+  },
+  "switchUser": {
+    "title": "切换用户",
+    "subtitle": "仍在 {department} 部门内，只是更换当前使用者。",
+    "confirm": "确认",
+    "cancel": "取消"
+  },
   "auth": {
     "subtitle": "按部门管理优先任务",
     "department": "部门",
@@ -56,6 +70,12 @@
     "newActivity": "新建任务",
     "searchPlaceholder": "搜索任务...",
     "noResults": "未找到任务。",
+    "scope": {
+      "mine": "我的任务",
+      "all": "所有任务",
+      "mineHint": "只显示分配给您的任务 · {count}",
+      "allHint": "部门内所有任务 · {count}"
+    },
     "columns": {
       "activity": "任务",
       "owner": "负责人",
@@ -135,6 +155,7 @@
       "reopenFailed": "无法重新打开该任务。",
       "followUpFailed": "无法记录更新。",
       "deleteFailed": "无法删除该任务。",
+      "reassignFailed": "无法重新分配该任务。",
       "sessionExpired": "会话已过期，请重新登录。"
     }
   },
@@ -159,7 +180,10 @@
       "create": "创建用户",
       "createdToast": "用户已创建。",
       "updatedToast": "用户已更新。",
-      "noUsers": "尚未注册任何用户。"
+      "noUsers": "尚未注册任何用户。",
+      "delete": "删除",
+      "confirmDelete": "确定要永久删除 {name} 吗？只有该用户从未被分配过任何任务时才能删除——否则请改为停用。",
+      "deletedToast": "用户已删除。"
     },
     "password": {
       "title": "修改部门密码",
@@ -187,11 +211,23 @@
       "updateUserFailed": "无法保存用户的更改。",
       "changePasswordFailed": "目前无法更改密码。",
       "createDepartmentFailed": "无法创建部门。",
-      "slugTaken": "该标识符已被使用，请选择其他标识符。"
+      "slugTaken": "该标识符已被使用，请选择其他标识符。",
+      "deleteUserFailed": "目前无法删除该用户。",
+      "deleteUserHasActivities": "该用户已有分配的任务——物理删除会破坏历史记录，请改为停用。"
     }
   },
   "dashboard": {
     "title": "仪表盘",
+    "scope": {
+      "general": "总体",
+      "personal": "个人",
+      "generalHint": "整个部门的指标（{department}）",
+      "personalHint": "仅您自己的任务（{name}）"
+    },
+    "panorama": {
+      "title": "GUT 优先级总览",
+      "subtitle": "当前筛选条件下共 {count} 项任务"
+    },
     "filters": {
       "owner": "负责人",
       "status": "状态",
@@ -211,6 +247,8 @@
       "statusDistribution": "按状态分布",
       "gutDistribution": "按 GUT 等级分布",
       "performanceRanking": "按负责人的绩效（按时完成 × 逾期）",
+      "closuresByOwner": "按人员统计的完成量",
+      "closuresByOwnerSubtitle": "已完成任务总量",
       "onTime": "按时",
       "late": "逾期",
       "noData": "当前筛选条件下没有数据。",

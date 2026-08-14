@@ -22,7 +22,9 @@ export type AdminErrorCode =
   | "update_user_failed"
   | "change_password_failed"
   | "create_department_failed"
-  | "slug_taken";
+  | "slug_taken"
+  | "delete_user_failed"
+  | "delete_user_has_activities";
 
 type ActionResult =
   | { ok: true }
@@ -82,6 +84,26 @@ export async function updateDepartmentUser(
   if (error) {
     console.error("updateDepartmentUser", error);
     return { ok: false, errorCode: "update_user_failed" };
+  }
+  revalidatePath(ADMIN_PATH);
+  return { ok: true };
+}
+
+export async function deleteDepartmentUser(userId: string): Promise<ActionResult> {
+  const guard = await requireGestor();
+  if (!guard.ok) return guard;
+
+  const supabase = await createSessionClient();
+  const { error } = await supabase.from("users").delete().eq("id", userId);
+
+  if (error) {
+    console.error("deleteDepartmentUser", error);
+    // FK "on delete restrict" em activities.owner_user_id — a pessoa já tem
+    // atividades vinculadas, exclusão física quebraria o histórico.
+    if (error.code === "23503") {
+      return { ok: false, errorCode: "delete_user_has_activities" };
+    }
+    return { ok: false, errorCode: "delete_user_failed" };
   }
   revalidatePath(ADMIN_PATH);
   return { ok: true };

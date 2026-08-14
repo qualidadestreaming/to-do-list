@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ import {
   type EditUserValues,
   type NewUserValues,
 } from "@/lib/validation/admin";
-import { createDepartmentUser, updateDepartmentUser } from "@/lib/actions/admin-actions";
+import { createDepartmentUser, deleteDepartmentUser, updateDepartmentUser } from "@/lib/actions/admin-actions";
 import { useAdminErrorTranslator } from "@/lib/i18n/admin-errors";
 import type { AppUser } from "@/types/database";
 
@@ -201,9 +201,24 @@ function EditUserDialog({
 
 export function UsersTab({ users }: { users: AppUser[] }) {
   const t = useTranslations("admin.users");
+  const translateError = useAdminErrorTranslator();
   const router = useRouter();
   const [createOpen, setCreateOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<AppUser | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  async function handleDelete(user: AppUser) {
+    if (!confirm(t("confirmDelete", { name: user.name }))) return;
+    setDeletingId(user.id);
+    const result = await deleteDepartmentUser(user.id);
+    setDeletingId(null);
+    if (!result.ok) {
+      toast.error(translateError(result));
+      return;
+    }
+    toast.success(t("deletedToast"));
+    router.refresh();
+  }
 
   return (
     <div className="space-y-4">
@@ -235,9 +250,25 @@ export function UsersTab({ users }: { users: AppUser[] }) {
                   {u.active ? t("active") : t("inactive")}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button type="button" size="sm" variant="outline" onClick={() => setEditingUser(u)}>
-                    {t("edit")}
-                  </Button>
+                  <div className="flex justify-end gap-2">
+                    <Button type="button" size="sm" variant="outline" onClick={() => setEditingUser(u)}>
+                      {t("edit")}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      disabled={deletingId === u.id}
+                      onClick={() => handleDelete(u)}
+                    >
+                      {deletingId === u.id ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="size-4" />
+                      )}
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}

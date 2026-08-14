@@ -30,6 +30,20 @@
     "activities": "Activities",
     "admin": "Administration"
   },
+  "sidebar": {
+    "department": "Department",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchUser": "Switch user"
+  },
+  "switchUser": {
+    "title": "Switch user",
+    "subtitle": "Stays in the {department} department, only changes who's using it.",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
   "auth": {
     "subtitle": "Priority activity management by department",
     "department": "Department",
@@ -56,6 +70,12 @@
     "newActivity": "New activity",
     "searchPlaceholder": "Search activity...",
     "noResults": "No activity found.",
+    "scope": {
+      "mine": "My activities",
+      "all": "All activities",
+      "mineHint": "Only activities assigned to you · {count}",
+      "allHint": "All activities in the department · {count}"
+    },
     "columns": {
       "activity": "Activity",
       "owner": "Owner",
@@ -135,6 +155,7 @@
       "reopenFailed": "Could not reopen the activity.",
       "followUpFailed": "Could not register the update.",
       "deleteFailed": "Could not delete the activity.",
+      "reassignFailed": "Could not reassign the activity.",
       "sessionExpired": "Session expired. Please log in again."
     }
   },
@@ -159,7 +180,10 @@
       "create": "Create user",
       "createdToast": "User created.",
       "updatedToast": "User updated.",
-      "noUsers": "No user registered yet."
+      "noUsers": "No user registered yet.",
+      "delete": "Delete",
+      "confirmDelete": "Permanently delete {name}? This only works if the person never had any activity assigned — otherwise, deactivate instead of deleting.",
+      "deletedToast": "User deleted."
     },
     "password": {
       "title": "Change department password",
@@ -187,11 +211,23 @@
       "updateUserFailed": "Could not save the user's changes.",
       "changePasswordFailed": "Could not change the password right now.",
       "createDepartmentFailed": "Could not create the department.",
-      "slugTaken": "That identifier is already in use — choose another one."
+      "slugTaken": "That identifier is already in use — choose another one.",
+      "deleteUserFailed": "Could not delete the user right now.",
+      "deleteUserHasActivities": "This person already has activities assigned — deleting would break the history. Deactivate instead."
     }
   },
   "dashboard": {
     "title": "Dashboard",
+    "scope": {
+      "general": "Overall",
+      "personal": "Personal",
+      "generalHint": "Metrics for the whole department ({department})",
+      "personalHint": "Only your activities ({name})"
+    },
+    "panorama": {
+      "title": "GUT priority overview",
+      "subtitle": "{count} activities in the current filter"
+    },
     "filters": {
       "owner": "Owner",
       "status": "Status",
@@ -211,6 +247,8 @@
       "statusDistribution": "Distribution by status",
       "gutDistribution": "Distribution by GUT band",
       "performanceRanking": "Performance by owner (on time × overdue)",
+      "closuresByOwner": "Closures by person",
+      "closuresByOwnerSubtitle": "Total volume of completed activities",
       "onTime": "On time",
       "late": "Overdue",
       "noData": "No data for the current filter.",

@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createServerClient } from "@/lib/supabase/server";
 import {
   createPendingDepartmentCookie,
@@ -8,6 +9,7 @@ import {
   destroySessionCookie,
   destroyPendingDepartmentCookie,
   getPendingDepartment,
+  getSession,
 } from "@/lib/auth/session";
 import type { UserRole } from "@/types/database";
 
@@ -144,4 +146,60 @@ export async function completeLogin(input: { userId: string }): Promise<Complete
 export async function logout() {
   await destroySessionCookie();
   redirect("/login");
+}
+
+// Troca "quem está usando" sem sair do departamento — não passa pela senha
+// de novo (a pessoa já provou que sabe a senha do departamento ao logar da
+// primeira vez; trocar de usuário aqui é só re-identificação, igual ao
+// passo 2 do login).
+export async function fetchDepartmentUsersForSwitch(): Promise<DepartmentUserOption[]> {
+  const session = await getSession();
+  if (!session) return [];
+
+  const supabase = createServerClient();
+  const { data, error } = await supabase.rpc("list_department_users", {
+    p_department_id: session.departmentId,
+  });
+  if (error) {
+    console.error("fetchDepartmentUsersForSwitch", error);
+    return [];
+  }
+  return (data ?? []).map((u: { user_id: string; user_name: string; user_role: UserRole }) => ({
+    id: u.user_id,
+    name: u.user_name,
+    role: u.user_role,
+  }));
+}
+
+export async function switchUser(newUserId: string): Promise<{ ok: false; errorCode: AuthErrorCode }> {
+  const session = await getSession();
+  if (!session) return { ok: false, errorCode: "session_expired" };
+
+  const supabase = createServerClient();
+  const { data, error } = await supabase.rpc("list_department_users", {
+    p_department_id: session.departmentId,
+  });
+  if (error) {
+    console.error("switchUser", error);
+    return { ok: false, errorCode: "confirm_error" };
+  }
+
+  const match = (data ?? []).find(
+    (u: { user_id: string }) => u.user_id === newUserId
+  ) as { user_id: string; user_name: string; user_role: UserRole } | undefined;
+
+  if (!match) {
+    return { ok: false, errorCode: "invalid_user" };
+  }
+
+  await createSessionCookie({
+    departmentId: session.departmentId,
+    departmentName: session.departmentName,
+    userId: match.user_id,
+    userName: match.user_name,
+    userRole: match.user_role,
+  });
+
+  revalidatePath("/app", "layout");
+  redirect("/app/dashboard");
 }

@@ -22,6 +22,7 @@ export function useActivityErrorTranslator() {
       reopen_failed: t("reopenFailed"),
       follow_up_failed: t("followUpFailed"),
       delete_failed: t("deleteFailed"),
+      reassign_failed: t("reassignFailed"),
     };
     return map[result.errorCode];
   };

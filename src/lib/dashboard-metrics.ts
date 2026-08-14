@@ -64,6 +64,30 @@ export interface PerformanceDatum {
   total: number;
 }
 
+export interface ClosureDatum {
+  ownerId: string;
+  name: string;
+  count: number;
+}
+
+/** Volume total de atividades concluídas por responsável — throughput, sem
+ * distinguir no-prazo/atrasada (isso já existe em computePerformanceByOwner,
+ * que mede qualidade, não volume). */
+export function computeClosuresByOwner(activities: Activity[], users: AppUser[]): ClosureDatum[] {
+  const byOwner = new Map<string, number>();
+  for (const activity of activities) {
+    if (activity.status !== "closed") continue;
+    byOwner.set(activity.owner_user_id, (byOwner.get(activity.owner_user_id) ?? 0) + 1);
+  }
+  return Array.from(byOwner.entries())
+    .map(([ownerId, count]) => ({
+      ownerId,
+      name: users.find((u) => u.id === ownerId)?.name ?? "—",
+      count,
+    }))
+    .sort((a, b) => b.count - a.count);
+}
+
 export function computePerformanceByOwner(
   activities: Activity[],
   users: AppUser[]
