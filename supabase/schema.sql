@@ -6,7 +6,11 @@
 -- -----------------------------------------------------------------------------
 -- 0. EXTENSÕES
 -- -----------------------------------------------------------------------------
-create extension if not exists pgcrypto; -- crypt()/gen_salt() para hash de senha de departamento
+-- Em projetos Supabase mais novos, extensões são instaladas no schema
+-- "extensions" por padrão (não em "public"), então crypt()/gen_salt() sem
+-- prefixo não são encontrados — por isso todo uso abaixo é schema-qualificado
+-- (extensions.crypt/extensions.gen_salt), em vez de confiar em search_path.
+create extension if not exists pgcrypto with schema extensions;
 
 -- -----------------------------------------------------------------------------
 -- 1. TABELAS
@@ -176,7 +180,7 @@ as $$
   select id, name
   from departments
   where slug = p_slug
-    and password_hash = crypt(p_password, password_hash)
+    and password_hash = extensions.crypt(p_password, password_hash)
 $$;
 
 -- Depois de validar a senha do departamento (login_department), o app lista
@@ -205,7 +209,7 @@ begin
     raise exception 'FORBIDDEN';
   end if;
   update departments
-  set password_hash = crypt(p_new_password, gen_salt('bf'))
+  set password_hash = extensions.crypt(p_new_password, extensions.gen_salt('bf'))
   where id = p_department_id;
 end;
 $$;
@@ -235,7 +239,7 @@ begin
   end if;
 
   insert into departments (name, slug, password_hash)
-  values (p_name, p_slug, crypt(p_password, gen_salt('bf')))
+  values (p_name, p_slug, extensions.crypt(p_password, extensions.gen_salt('bf')))
   returning id into v_department_id;
 
   insert into users (department_id, name, role)
