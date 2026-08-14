@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, LabelList, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DASHBOARD_CARD_HEIGHT, RANKING_ROW_HEIGHT } from "@/components/dashboard/chart-sizing";
@@ -25,13 +25,16 @@ export function PerformanceRankingChart({ data }: { data: PerformanceDatum[] }) 
                 margin={{ top: 8, right: 16, left: 8, bottom: 0 }}
                 barCategoryGap="20%"
               >
-                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" axisLine={false} tickLine={false} />
                 <YAxis
                   type="category"
                   dataKey="name"
                   width={110}
                   tick={{ fontSize: 12 }}
                   stroke="var(--muted-foreground)"
+                  axisLine={false}
+                  tickLine={false}
                 />
                 <Tooltip cursor={{ fill: "var(--muted)" }} />
                 <Legend />

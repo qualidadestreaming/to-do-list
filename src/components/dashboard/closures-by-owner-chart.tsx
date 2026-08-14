@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DASHBOARD_CARD_HEIGHT, RANKING_ROW_HEIGHT } from "@/components/dashboard/chart-sizing";
@@ -21,16 +21,19 @@ export function ClosuresByOwnerChart({ data }: { data: ClosureDatum[] }) {
           <div style={{ height: innerHeight }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data} layout="vertical" margin={{ top: 4, right: 20, left: 8, bottom: 0 }}>
-                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} stroke="var(--muted-foreground)" axisLine={false} tickLine={false} />
                 <YAxis
                   type="category"
                   dataKey="name"
                   width={110}
                   tick={{ fontSize: 12 }}
                   stroke="var(--muted-foreground)"
+                  axisLine={false}
+                  tickLine={false}
                 />
                 <Tooltip cursor={{ fill: "var(--muted)" }} />
-                <Bar dataKey="count" fill="var(--brand-purple)" radius={[0, 4, 4, 0]} maxBarSize={28}>
+                <Bar dataKey="count" fill="var(--brand-blue)" radius={[0, 4, 4, 0]} maxBarSize={28}>
                   <LabelList
                     dataKey="count"
                     position="right"
