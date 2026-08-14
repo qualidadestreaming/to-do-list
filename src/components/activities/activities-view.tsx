@@ -256,7 +256,7 @@ export function ActivitiesView({
                     {activity.name}
                   </td>
                   <td className="max-w-sm px-4 py-3 text-muted-foreground">
-                    <p className="line-clamp-3 leading-relaxed whitespace-pre-line">
+                    <p className="line-clamp-2 min-h-[3.25em] leading-relaxed whitespace-pre-line">
                       {activity.title}
                     </p>
                   </td>
