@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { createSessionClient } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/session";
 import {
@@ -60,6 +60,7 @@ export async function createDepartmentUser(input: NewUserValues): Promise<Action
     return { ok: false, errorCode: "create_user_failed" };
   }
   revalidatePath(ADMIN_PATH);
+  updateTag(`users-${guard.session.departmentId}`);
   return { ok: true };
 }
 
@@ -86,6 +87,7 @@ export async function updateDepartmentUser(
     return { ok: false, errorCode: "update_user_failed" };
   }
   revalidatePath(ADMIN_PATH);
+  updateTag(`users-${guard.session.departmentId}`);
   return { ok: true };
 }
 
@@ -106,6 +108,7 @@ export async function deleteDepartmentUser(userId: string): Promise<ActionResult
     return { ok: false, errorCode: "delete_user_failed" };
   }
   revalidatePath(ADMIN_PATH);
+  updateTag(`users-${guard.session.departmentId}`);
   return { ok: true };
 }
 

@@ -65,7 +65,7 @@ export function ActivitiesView({
   const tGut = useTranslations("activities.gutBands");
   const activities = initialActivities;
 
-  const [scope, setScope] = useState<Scope>("todas");
+  const [scope, setScope] = useState<Scope>("minhas");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [ownerFilter, setOwnerFilter] = useState<string>("all");
   const [bandFilter, setBandFilter] = useState<GutBandKey | "all">("all");
@@ -105,7 +105,9 @@ export function ActivitiesView({
 
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      list = list.filter((a) => a.title.toLowerCase().includes(q));
+      list = list.filter(
+        (a) => a.name.toLowerCase().includes(q) || a.title.toLowerCase().includes(q)
+      );
     }
 
     const sorted = [...list].sort((a, b) => {
@@ -235,7 +237,8 @@ export function ActivitiesView({
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left text-xs uppercase text-muted-foreground">
               <tr>
-                <th className="px-4 py-3">{t("columns.activity")}</th>
+                <th className="px-4 py-3">{t("columns.name")}</th>
+                <th className="px-4 py-3">{t("columns.description")}</th>
                 <th className="px-4 py-3">{t("columns.owner")}</th>
                 <th className="px-4 py-3">{t("columns.dueDate")}</th>
                 <th className="px-4 py-3">{t("columns.priority")}</th>
@@ -247,10 +250,15 @@ export function ActivitiesView({
                 <tr
                   key={activity.id}
                   onClick={() => setSelectedId(activity.id)}
-                  className="cursor-pointer hover:bg-accent/5"
+                  className="cursor-pointer align-top hover:bg-accent/5"
                 >
-                  <td className="max-w-xs truncate px-4 py-3 font-medium text-foreground">
-                    {activity.title}
+                  <td className="max-w-[220px] px-4 py-3 font-medium text-foreground">
+                    {activity.name}
+                  </td>
+                  <td className="max-w-sm px-4 py-3 text-muted-foreground">
+                    <p className="line-clamp-3 leading-relaxed whitespace-pre-line">
+                      {activity.title}
+                    </p>
                   </td>
                   <td className="px-4 py-3">
                     <AssignPopover
@@ -276,7 +284,7 @@ export function ActivitiesView({
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                     {t("noResults")}
                   </td>
                 </tr>

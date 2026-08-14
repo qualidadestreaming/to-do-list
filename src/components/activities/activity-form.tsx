@@ -57,6 +57,7 @@ export function ActivityForm({
   } = useForm<ActivityFormValues>({
     resolver: zodResolver(activityFormSchema),
     defaultValues: {
+      name: "",
       title: "",
       ownerUserId: users[0]?.id ?? "",
       startDate: new Date().toISOString().slice(0, 10),
@@ -91,7 +92,13 @@ export function ActivityForm({
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="title">{t("activityLabel")}</Label>
+        <Label htmlFor="name">{t("nameLabel")}</Label>
+        <Input id="name" {...register("name")} maxLength={120} />
+        {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="title">{t("descriptionLabel")}</Label>
         <Textarea id="title" rows={3} {...register("title")} />
         {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
       </div>

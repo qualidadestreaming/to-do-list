@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { createSessionClient } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/session";
 import {
@@ -32,6 +32,15 @@ type ActionResult =
 
 const ACTIVITIES_PATH = "/app/atividades";
 
+/** Invalida a cache de leitura (src/lib/data/activities.ts) do departamento
+ * junto com o path — toda mutação precisa chamar isso, senão o próximo
+ * carregamento continua servindo dado desatualizado da cache agressiva. */
+function invalidateActivitiesCache(departmentId: string) {
+  updateTag(`activities-${departmentId}`);
+  revalidatePath(ACTIVITIES_PATH);
+  revalidatePath("/app/dashboard");
+}
+
 export async function createActivity(input: ActivityFormValues): Promise<ActionResult> {
   const session = await getSession();
   if (!session) return { ok: false, errorCode: "session_expired" };
@@ -48,6 +57,7 @@ export async function createActivity(input: ActivityFormValues): Promise<ActionR
     .insert({
       department_id: session.departmentId,
       owner_user_id: values.ownerUserId,
+      name: values.name,
       title: values.title,
       start_date: values.startDate,
       due_date: values.dueDate || null,
@@ -75,7 +85,7 @@ export async function createActivity(input: ActivityFormValues): Promise<ActionR
     });
   }
 
-  revalidatePath(ACTIVITIES_PATH);
+  invalidateActivitiesCache(session.departmentId);
   return { ok: true };
 }
 
@@ -97,6 +107,7 @@ export async function updateActivity(
     .from("activities")
     .update({
       owner_user_id: values.ownerUserId,
+      name: values.name,
       title: values.title,
       start_date: values.startDate,
       due_date: values.dueDate || null,
@@ -119,11 +130,14 @@ export async function updateActivity(
     });
   }
 
-  revalidatePath(ACTIVITIES_PATH);
+  invalidateActivitiesCache(session.departmentId);
   return { ok: true };
 }
 
 export async function reassignActivity(activityId: string, newOwnerId: string): Promise<ActionResult> {
+  const session = await getSession();
+  if (!session) return { ok: false, errorCode: "session_expired" };
+
   const supabase = await createSessionClient();
   const { error } = await supabase
     .from("activities")
@@ -134,11 +148,14 @@ export async function reassignActivity(activityId: string, newOwnerId: string): 
     console.error("reassignActivity", error);
     return { ok: false, errorCode: "reassign_failed" };
   }
-  revalidatePath(ACTIVITIES_PATH);
+  invalidateActivitiesCache(session.departmentId);
   return { ok: true };
 }
 
 export async function startActivity(activityId: string): Promise<ActionResult> {
+  const session = await getSession();
+  if (!session) return { ok: false, errorCode: "session_expired" };
+
   const supabase = await createSessionClient();
   const { error } = await supabase
     .from("activities")
@@ -150,7 +167,7 @@ export async function startActivity(activityId: string): Promise<ActionResult> {
     console.error("startActivity", error);
     return { ok: false, errorCode: "start_failed" };
   }
-  revalidatePath(ACTIVITIES_PATH);
+  invalidateActivitiesCache(session.departmentId);
   return { ok: true };
 }
 
@@ -158,6 +175,9 @@ export async function closeActivity(input: {
   activityId: string;
   completedDate: string;
 }): Promise<ActionResult> {
+  const session = await getSession();
+  if (!session) return { ok: false, errorCode: "session_expired" };
+
   const parsed = closeActivitySchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, errorCode: "validation", validationMessage: parsed.error.issues[0]?.message };
@@ -173,11 +193,14 @@ export async function closeActivity(input: {
     console.error("closeActivity", error);
     return { ok: false, errorCode: "close_failed" };
   }
-  revalidatePath(ACTIVITIES_PATH);
+  invalidateActivitiesCache(session.departmentId);
   return { ok: true };
 }
 
 export async function reopenActivity(activityId: string): Promise<ActionResult> {
+  const session = await getSession();
+  if (!session) return { ok: false, errorCode: "session_expired" };
+
   const supabase = await createSessionClient();
   const { error } = await supabase
     .from("activities")
@@ -189,7 +212,7 @@ export async function reopenActivity(activityId: string): Promise<ActionResult> 
     console.error("reopenActivity", error);
     return { ok: false, errorCode: "reopen_failed" };
   }
-  revalidatePath(ACTIVITIES_PATH);
+  invalidateActivitiesCache(session.departmentId);
   return { ok: true };
 }
 
@@ -236,6 +259,9 @@ export async function getActivityFollowUps(activityId: string) {
 }
 
 export async function deleteActivity(activityId: string): Promise<ActionResult> {
+  const session = await getSession();
+  if (!session) return { ok: false, errorCode: "session_expired" };
+
   const supabase = await createSessionClient();
   const { error } = await supabase.from("activities").delete().eq("id", activityId);
 
@@ -243,6 +269,6 @@ export async function deleteActivity(activityId: string): Promise<ActionResult> 
     console.error("deleteActivity", error);
     return { ok: false, errorCode: "delete_failed" };
   }
-  revalidatePath(ACTIVITIES_PATH);
+  invalidateActivitiesCache(session.departmentId);
   return { ok: true };
 }

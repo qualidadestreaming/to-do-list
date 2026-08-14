@@ -35,6 +35,7 @@ export type Activity = {
   id: string;
   department_id: string;
   owner_user_id: string;
+  name: string;
   title: string;
   start_date: string;
   due_date: string | null;
@@ -100,6 +101,7 @@ export interface Database {
         Insert: Partial<Activity> & {
           department_id: string;
           owner_user_id: string;
+          name: string;
           title: string;
           gravidade: number;
           urgencia: number;

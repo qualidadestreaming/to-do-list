@@ -52,7 +52,7 @@ export function DashboardView({
   const tStatus = useTranslations("activities.status");
   const tGut = useTranslations("activities.gutBands");
 
-  const [scope, setScope] = useState<Scope>("geral");
+  const [scope, setScope] = useState<Scope>("pessoal");
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [bandFilter, setBandFilter] = useState<GutBandKey | "all">("all");

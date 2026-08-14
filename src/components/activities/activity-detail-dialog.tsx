@@ -66,6 +66,7 @@ export function ActivityDetailDialog({
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="pr-6">
+            <span className="mb-2 block text-base font-semibold">{activity.name}</span>
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge status={activity.status} overdue={overdue} />
               <PriorityBadge priority={activity.priority} />
@@ -167,6 +168,7 @@ export function ActivityDetailDialog({
               submitLabel={tForm("submitEdit")}
               noteLabel={tForm("noteOnEdit")}
               defaultValues={{
+                name: activity.name,
                 title: activity.title,
                 ownerUserId: activity.owner_user_id,
                 startDate: activity.start_date,

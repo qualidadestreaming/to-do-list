@@ -3,6 +3,7 @@
 import { Bar, BarChart, Cell, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DASHBOARD_CARD_HEIGHT } from "@/components/dashboard/chart-sizing";
 import type { GutBandDatum } from "@/lib/dashboard-metrics";
 
 const COLORS: Record<GutBandDatum["key"], string> = {
@@ -24,7 +25,7 @@ export function GutBandChart({ data }: { data: GutBandDatum[] }) {
       <CardHeader>
         <CardTitle className="text-sm font-medium">{t("gutDistribution")}</CardTitle>
       </CardHeader>
-      <CardContent className="h-64">
+      <CardContent style={{ height: DASHBOARD_CARD_HEIGHT }}>
         {hasData ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>

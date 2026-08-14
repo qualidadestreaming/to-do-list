@@ -77,7 +77,8 @@
       "allHint": "All activities in the department · {count}"
     },
     "columns": {
-      "activity": "Activity",
+      "name": "Activity Name",
+      "description": "Description",
       "owner": "Owner",
       "dueDate": "Due date",
       "priority": "Priority",
@@ -99,7 +100,7 @@
       "sortDueDateDesc": "Furthest due date"
     },
     "status": {
-      "ready": "Ready",
+      "ready": "Standby",
       "on_going": "In progress",
       "closed": "Done",
       "overdue": "Overdue",
@@ -114,7 +115,8 @@
       "highRange": "High (61–125)"
     },
     "form": {
-      "activityLabel": "Activity",
+      "nameLabel": "Activity Name",
+      "descriptionLabel": "Description",
       "owner": "Owner",
       "ownerPlaceholder": "Select the owner",
       "startDate": "Start",
@@ -240,7 +242,7 @@
     },
     "kpis": {
       "total": "Total activities",
-      "ready": "Ready",
+      "ready": "Standby",
       "onGoing": "In progress",
       "closed": "Done",
       "overdue": "Overdue",

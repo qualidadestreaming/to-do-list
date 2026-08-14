@@ -77,7 +77,8 @@
       "allHint": "Todas as atividades do departamento · {count}"
     },
     "columns": {
-      "activity": "Atividade",
+      "name": "Nome da Atividade",
+      "description": "Descrição",
       "owner": "Responsável",
       "dueDate": "Prazo",
       "priority": "Prioridade",
@@ -99,7 +100,7 @@
       "sortDueDateDesc": "Prazo mais distante"
     },
     "status": {
-      "ready": "Pronta",
+      "ready": "Standby",
       "on_going": "Em andamento",
       "closed": "Concluída",
       "overdue": "Atrasada",
@@ -114,7 +115,8 @@
       "highRange": "Alta (61–125)"
     },
     "form": {
-      "activityLabel": "Atividade",
+      "nameLabel": "Nome da Atividade",
+      "descriptionLabel": "Descrição",
       "owner": "Responsável",
       "ownerPlaceholder": "Selecione o responsável",
       "startDate": "Início",
@@ -240,7 +242,7 @@
     },
     "kpis": {
       "total": "Total de atividades",
-      "ready": "Prontas",
+      "ready": "Standby",
       "onGoing": "Em andamento",
       "closed": "Concluídas",
       "overdue": "Atrasadas",

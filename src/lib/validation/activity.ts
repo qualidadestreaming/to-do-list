@@ -4,7 +4,8 @@ const gutScale = z.coerce.number().int().min(1).max(5);
 
 export const activityFormSchema = z
   .object({
-    title: z.string().trim().min(1, "Descreva a atividade.").max(500),
+    name: z.string().trim().min(1, "Dê um nome curto para a atividade.").max(120),
+    title: z.string().trim().min(1, "Descreva a atividade.").max(2000),
     ownerUserId: z.string().uuid("Escolha o responsável."),
     startDate: z.string().min(1, "Informe a data de início."),
     dueDate: z.string().optional().or(z.literal("")),

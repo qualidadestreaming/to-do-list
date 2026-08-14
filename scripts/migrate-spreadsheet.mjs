@@ -191,6 +191,26 @@ function classifyStatus(statusRaw, performanceRaw) {
   return { kind: "unknown", detail: `valor não reconhecido: "${candidate}"` };
 }
 
+// Gera o "Nome da Atividade" (curto) a partir da descrição longa — mesma
+// heurística de scripts/backfill-activity-names.mjs, ver comentário lá.
+function summarizeName(title) {
+  const MAX_LEN = 70;
+  let s = String(title ?? "").trim();
+  const markers = [/\n/, / Email\s*\d*\s*:/i, / SPM\s*:/i, / E-?mail\s*:/i];
+  for (const m of markers) {
+    const match = s.search(m);
+    if (match > 0) s = s.slice(0, match);
+  }
+  s = s.trim().replace(/[-:.,;]+$/, "").trim();
+  if (!s) s = String(title ?? "").trim().slice(0, MAX_LEN);
+  if (s.length > MAX_LEN) {
+    const cut = s.slice(0, MAX_LEN);
+    const lastSpace = cut.lastIndexOf(" ");
+    s = (lastSpace > 30 ? cut.slice(0, lastSpace) : cut).trim() + "…";
+  }
+  return s || "Atividade sem título";
+}
+
 // ---------------------------------------------------------------------------
 // Conversão de data serial do Excel -> "YYYY-MM-DD"
 // ---------------------------------------------------------------------------
@@ -434,6 +454,7 @@ async function main() {
           .insert({
             department_id: departmentId,
             owner_user_id: ownerId,
+            name: summarizeName(title),
             title,
             start_date: startDate,
             due_date: dueDate,

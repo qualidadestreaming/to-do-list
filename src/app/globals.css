@@ -87,7 +87,11 @@
 
   --background: #ffffff;
   --foreground: #1a1a1a;
-  --card: #f2f2f5;
+  /* Card branco puro (não cinza-arroxeado) — padrão dos dashboards internos
+     Multilaser (BI corporativo): fundo neutro, a cor mora no dado (gráficos,
+     badges de status), não no chrome ao redor. Ver CLAUDE.md, skill
+     dashboard-multilaser. */
+  --card: #ffffff;
   --card-foreground: #1a1a1a;
   --popover: #ffffff;
   --popover-foreground: #1a1a1a;
@@ -100,8 +104,8 @@
   --accent: var(--brand-blue);
   --accent-foreground: #ffffff;
   --destructive: #c0362c;
-  --border: #e2e2e8;
-  --input: #e2e2e8;
+  --border: #dcdce3;
+  --input: #dcdce3;
   --ring: var(--brand-purple);
   --chart-1: var(--brand-purple);
   --chart-2: var(--brand-blue);

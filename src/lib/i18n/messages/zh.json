@@ -77,7 +77,8 @@
       "allHint": "部门内所有任务 · {count}"
     },
     "columns": {
-      "activity": "任务",
+      "name": "任务名称",
+      "description": "描述",
       "owner": "负责人",
       "dueDate": "截止日期",
       "priority": "优先级",
@@ -99,7 +100,7 @@
       "sortDueDateDesc": "最远截止日期"
     },
     "status": {
-      "ready": "待处理",
+      "ready": "待命",
       "on_going": "进行中",
       "closed": "已完成",
       "overdue": "已逾期",
@@ -114,7 +115,8 @@
       "highRange": "高 (61–125)"
     },
     "form": {
-      "activityLabel": "任务",
+      "nameLabel": "任务名称",
+      "descriptionLabel": "描述",
       "owner": "负责人",
       "ownerPlaceholder": "选择负责人",
       "startDate": "开始日期",
@@ -240,7 +242,7 @@
     },
     "kpis": {
       "total": "任务总数",
-      "ready": "待处理",
+      "ready": "待命",
       "onGoing": "进行中",
       "closed": "已完成",
       "overdue": "已逾期",

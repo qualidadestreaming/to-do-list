@@ -42,7 +42,8 @@ create table activities (
   id uuid primary key default gen_random_uuid(),
   department_id uuid not null references departments(id) on delete cascade,
   owner_user_id uuid not null references users(id) on delete restrict,
-  title text not null check (char_length(btrim(title)) > 0),
+  name text not null check (char_length(btrim(name)) > 0), -- "Nome da Atividade" (curto)
+  title text not null check (char_length(btrim(title)) > 0), -- "Descrição" (texto longo)
   start_date date not null default current_date,
   due_date date,
   gravidade smallint not null check (gravidade between 1 and 5),
