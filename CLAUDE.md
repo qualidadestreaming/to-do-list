@@ -16,12 +16,18 @@ Construído em fases. O usuário pediu explicitamente, numa rodada (2026-08-13),
 
 **Bug real encontrado e corrigido nessa sessão**: `crypt()`/`gen_salt()` (pgcrypto) davam "function does not exist" no projeto Supabase novo, porque extensões novas instalam no schema `extensions`, não em `public`. Corrigido qualificando todas as chamadas (`extensions.crypt(...)`, `extensions.gen_salt(...)`) em `login_department`, `set_department_password` e `create_department`. Se algum dia recriar o projeto do zero, o `schema.sql` atual já está com o fix — não precisa repetir esse processo de descoberta.
 
+**Deploy em produção (2026-08-14)**: Vercel conectada ao GitHub (`qualidadestreaming/to-do-list`, branch `main`, deploy automático a cada push), 4 env vars configuradas lá também. URL: `https://to-do-list-beta-lemon-14.vercel.app`. Testado ao vivo em produção (login, dashboard, admin) — sem erros.
+
+**Migração real rodada (2026-08-14)**: `scripts/migrate-spreadsheet.mjs --commit` executado contra o banco real. **159 atividades migradas**, 1527 já finalizadas (ignoradas), 168 em revisão manual (dado incompleto/inconsistente na planilha original — CSV em `scripts/migration-output/`, gitignored). Regra de status confirmada com o usuário: **"due-date"** (linha com prazo → `on_going`, sem prazo → `ready`) — é o default do script, nada a mudar. Duas correções de dado de pessoa, confirmadas pelo usuário antes de rodar:
+- 8 pessoas desligadas da empresa (Josiele, Victor, Oseas, Anderson, Wilson Rocha, George, Alfredo, Adria): marcadas `active=false` na tabela `users` (preserva histórico, não aparecem mais no login) e suas abas **inteiras excluídas da migração** (`EXCLUDED_OWNERS` no script — nem entram no relatório de revisão manual, exclusão intencional). Nayara foi inicialmente incluída nessa lista por engano e depois reativada — conferir a lista de excluídos se for rodar de novo.
+- `AlexandreSS` (nome da aba) foi renomeado pra `Alexandre` no cadastro (`users.name`) — o script tem um `OWNER_NAME_ALIASES` mapeando o nome antigo da aba pro nome novo, senão a migração não acharia o dono.
+
 **O que ainda falta**:
-1. Rodar `scripts/migrate-spreadsheet.mjs --commit` de verdade (só foi testado em dry-run) — decisões pendentes de status/on_going-vs-ready pro dado migrado, ver seção Fase 5.
-2. Decidir quem é o gestor real da Qualidade e promover essa pessoa via painel de Admin (`/app/admin` → aba Usuários) — hoje só existe a conta de teste **"Teste Gestor"** no banco (criada por mim pra validar o painel; pode ser renomeada/removida quando o gestor real for definido).
-3. Trocar a senha do departamento Qualidade (hoje é `teste123`, temporária) via painel de Admin → aba "Senha do departamento".
-4. Deploy na Vercel (nunca configurado).
-5. Logo real do Grupo Multilaser (segue como chip de texto, ver seção de identidade visual).
+1. Decidir quem é o gestor real da Qualidade e promover essa pessoa via painel de Admin (`/app/admin` → aba Usuários) — hoje só existe a conta de teste **"Teste Gestor"** no banco (criada por mim pra validar o painel; usuário disse que vai assumir esse papel ele mesmo quando tiver acesso — não inventar/promover ninguém sem ele pedir).
+2. Trocar a senha do departamento Qualidade (hoje é `teste123`, temporária) — usuário pediu explicitamente pra manter por enquanto, não trocar sem ele pedir.
+3. Domínio próprio na Vercel (opcional, hoje é só o `.vercel.app`).
+4. Logo real do Grupo Multilaser (segue como chip de texto, ver seção de identidade visual).
+5. As 168 linhas em revisão manual da migração (`scripts/migration-output/manual_review_*.csv`) não foram tratadas — ficam de fora do sistema até alguém revisar linha a linha (fora do escopo automatizável, dado real da planilha estava incompleto/inconsistente nessas linhas).
 
 ## Stack
 
