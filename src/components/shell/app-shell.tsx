@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Sidebar } from "@/components/shell/sidebar";
 import type { SessionPayload } from "@/lib/auth/session";
@@ -18,8 +19,16 @@ export function AppShell({
   children: ReactNode;
 }) {
   const tSidebar = useTranslations("sidebar");
+  const tNav = useTranslations("nav");
+  const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const pageTitle = pathname.startsWith("/app/admin")
+    ? tNav("admin")
+    : pathname.startsWith("/app/atividades")
+      ? tNav("activities")
+      : tNav("dashboard");
 
   useEffect(() => {
     if (localStorage.getItem(COLLAPSE_STORAGE_KEY) === "1") setCollapsed(true);
@@ -44,16 +53,19 @@ export function AppShell({
         onCloseMobile={() => setMobileOpen(false)}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 items-center gap-3 border-b bg-card px-4 md:hidden">
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b bg-card px-4 sm:px-6">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
             aria-label={tSidebar("openMenu")}
-            className="rounded-md p-1.5 text-foreground hover:bg-muted"
+            className="rounded-md p-1.5 text-foreground hover:bg-muted md:hidden"
           >
             <Menu className="size-5" />
           </button>
-          <span className="text-sm font-bold text-brand-purple">Multilaser TDL</span>
+          <h2 className="truncate text-sm font-bold text-foreground sm:text-base">{pageTitle}</h2>
+          <span className="hidden truncate text-xs text-muted-foreground sm:inline">
+            {session.departmentName}
+          </span>
         </header>
         <main className="flex-1 bg-muted/40 p-4 sm:p-6">{children}</main>
       </div>

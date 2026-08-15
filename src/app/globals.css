@@ -73,12 +73,12 @@
 }
 
 :root {
-  /* Fonte oficial: Inter (via next/font/google, self-hosted no build) —
-     troca da pilha de sistema (Arial) por uma fonte desenhada pra UI,
-     pedido explícito do usuário por um visual mais profissional em todo
-     o sistema. --font-inter é a CSS var que o next/font injeta no <html>. */
-  --font-sans: var(--font-inter), -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  /* Fonte oficial: Arial — igual ao Hisense Improvement List (site-web
+     irmão deste, mesma referência visual), que usa a pilha de fontes do
+     sistema operacional em vez de fonte customizada. Sem next/font, não
+     precisa de arquivo/hospedagem. */
+  --font-sans: Arial, "Helvetica Neue", Helvetica, -apple-system,
+    "Segoe UI", sans-serif;
 
   /* Identidade visual oficial Grupo Multilaser (fixa, não varia com o tema) */
   --brand-purple: #5000bf;
