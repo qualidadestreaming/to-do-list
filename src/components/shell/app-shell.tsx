@@ -67,7 +67,9 @@ export function AppShell({
             {session.departmentName}
           </span>
         </header>
-        <main className="flex-1 bg-muted/40 px-4 pt-1.5 pb-4 sm:px-6 sm:pt-2 sm:pb-6">{children}</main>
+        <main className="flex-1 bg-gradient-to-br from-brand-purple/[0.04] via-background to-brand-blue/[0.06] px-4 pt-1.5 pb-4 sm:px-6 sm:pt-2 sm:pb-6">
+          <div className="mx-auto w-full max-w-[1400px]">{children}</div>
+        </main>
       </div>
     </div>
   );
