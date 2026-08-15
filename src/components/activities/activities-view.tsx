@@ -142,7 +142,7 @@ export function ActivitiesView({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex gap-0.5 rounded-lg border bg-card p-0.5">
+        <div className="inline-flex gap-0.5 rounded-lg bg-muted p-0.5">
           {(["minhas", "todas"] as Scope[]).map((s) => (
             <button
               key={s}
@@ -151,7 +151,7 @@ export function ActivitiesView({
               className={cn(
                 "rounded-md px-3.5 py-1.5 text-sm font-semibold transition-colors",
                 scope === s
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >

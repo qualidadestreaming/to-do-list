@@ -147,7 +147,7 @@ export function Sidebar({
               title={tSidebar("switchUser")}
               className="mb-2 flex w-full items-center gap-2 rounded-lg px-1 py-1 text-left hover:bg-sidebar-accent"
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-purple/10 text-xs font-bold text-brand-purple">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-foreground">
                 {initials(session.userName)}
               </div>
               <div className="min-w-0 flex-1">
@@ -166,7 +166,7 @@ export function Sidebar({
               title={tSidebar("switchUser")}
               className="mb-2 flex w-full items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-sidebar-accent"
             >
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-purple/10 text-[11px] font-bold text-brand-purple">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-[11px] font-bold text-foreground">
                 {initials(session.userName)}
               </div>
             </button>

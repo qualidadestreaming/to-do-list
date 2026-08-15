@@ -168,20 +168,12 @@ export function ActivityDetailDialog({
         )}
 
         <Tabs defaultValue="detalhes" className="min-h-0 flex-1 gap-0">
-          <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b bg-transparent px-6 py-0">
-            <TabsTrigger
-              value="detalhes"
-              className="rounded-none border-b-2 border-transparent px-2 py-2.5 text-xs font-bold text-muted-foreground shadow-none data-active:border-primary data-active:bg-transparent data-active:text-primary"
-            >
-              {t("tabDetails")}
-            </TabsTrigger>
-            <TabsTrigger
-              value="historico"
-              className="rounded-none border-b-2 border-transparent px-2 py-2.5 text-xs font-bold text-muted-foreground shadow-none data-active:border-primary data-active:bg-transparent data-active:text-primary"
-            >
-              {t("tabFollowUp")}
-            </TabsTrigger>
-          </TabsList>
+          <div className="border-b px-6 py-3">
+            <TabsList>
+              <TabsTrigger value="detalhes">{t("tabDetails")}</TabsTrigger>
+              <TabsTrigger value="historico">{t("tabFollowUp")}</TabsTrigger>
+            </TabsList>
+          </div>
           <TabsContent value="detalhes" className="min-h-0 overflow-y-auto px-6 py-6">
             <ActivityForm
               users={users}

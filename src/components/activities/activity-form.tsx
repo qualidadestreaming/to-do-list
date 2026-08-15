@@ -93,12 +93,12 @@ export function ActivityForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("nameLabel")}</Label>
+          <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("nameLabel")}</Label>
           <Input id="name" className="rounded-lg" {...register("name")} maxLength={120} />
           {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="ownerUserId" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("owner")}</Label>
+          <Label htmlFor="ownerUserId" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("owner")}</Label>
           <Controller
             name="ownerUserId"
             control={control}
@@ -124,28 +124,28 @@ export function ActivityForm({
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="title" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("descriptionLabel")}</Label>
+        <Label htmlFor="title" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("descriptionLabel")}</Label>
         <Textarea id="title" rows={3} className="rounded-lg" {...register("title")} />
         {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label htmlFor="startDate" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("startDate")}</Label>
+          <Label htmlFor="startDate" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("startDate")}</Label>
           <Input id="startDate" type="date" className="rounded-lg" {...register("startDate")} />
           {errors.startDate && (
             <p className="text-xs text-destructive">{errors.startDate.message}</p>
           )}
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="dueDate" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("dueDate")}</Label>
+          <Label htmlFor="dueDate" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("dueDate")}</Label>
           <Input id="dueDate" type="date" className="rounded-lg" {...register("dueDate")} />
           {errors.dueDate && <p className="text-xs text-destructive">{errors.dueDate.message}</p>}
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("gutMatrix")}</Label>
+        <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("gutMatrix")}</Label>
         <div className="grid grid-cols-3 gap-4">
           {GUT_AXES.map((axis) => (
             <div key={axis.key} className="space-y-1">
@@ -181,7 +181,7 @@ export function ActivityForm({
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="note" className="text-[10px] font-bold uppercase tracking-wider text-primary">{noteLabel ?? t("note")}</Label>
+        <Label htmlFor="note" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{noteLabel ?? t("note")}</Label>
         <Textarea id="note" rows={2} className="rounded-lg" {...register("note")} />
       </div>
 

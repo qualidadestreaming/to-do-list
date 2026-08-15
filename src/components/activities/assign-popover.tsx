@@ -56,9 +56,9 @@ export function AssignPopover({
         <button
           type="button"
           onClick={(e) => e.stopPropagation()}
-          className="flex items-center gap-2 rounded-full border border-dashed border-transparent py-0.5 pl-0.5 pr-2 text-sm hover:border-primary hover:text-primary"
+          className="flex items-center gap-2 rounded-full border border-dashed border-transparent py-0.5 pl-0.5 pr-2 text-sm hover:border-border hover:bg-muted/50"
         >
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-bold text-foreground">
             {initials(owner?.name ?? "—")}
           </span>
           {owner?.name ?? "—"}

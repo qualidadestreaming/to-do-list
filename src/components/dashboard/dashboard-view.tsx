@@ -97,7 +97,7 @@ export function DashboardView({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
-        <div className="inline-flex gap-0.5 rounded-lg border bg-card p-0.5">
+        <div className="inline-flex gap-0.5 rounded-lg bg-muted p-0.5">
           {(["geral", "pessoal"] as Scope[]).map((s) => (
             <button
               key={s}
@@ -106,7 +106,7 @@ export function DashboardView({
               className={cn(
                 "rounded-md px-3.5 py-1.5 text-sm font-semibold transition-colors",
                 scope === s
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
