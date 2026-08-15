@@ -115,6 +115,7 @@
       "highRange": "高 (61–125)"
     },
     "form": {
+      "newActivityEyebrow": "新建任务",
       "nameLabel": "任务名称",
       "descriptionLabel": "描述",
       "owner": "负责人",

@@ -115,6 +115,7 @@
       "highRange": "High (61–125)"
     },
     "form": {
+      "newActivityEyebrow": "New activity",
       "nameLabel": "Activity Name",
       "descriptionLabel": "Description",
       "owner": "Owner",

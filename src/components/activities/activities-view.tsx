@@ -295,24 +295,29 @@ export function ActivitiesView({
       </div>
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{t("newActivity")}</DialogTitle>
+        <DialogContent fitted className="h-[760px] max-h-[90vh] gap-0 sm:max-w-2xl">
+          <DialogHeader className="static mx-0 mt-0 gap-1.5 border-b bg-transparent px-6 pt-6 pb-5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              {t("form.newActivityEyebrow")}
+            </p>
+            <DialogTitle className="pr-8 text-base font-bold">{t("newActivity")}</DialogTitle>
           </DialogHeader>
-          <ActivityForm
-            users={users}
-            submitLabel={t("form.submitCreate")}
-            defaultValues={{ ownerUserId: currentUserId }}
-            onSubmit={async (values) => {
-              const result = await createActivity(values);
-              if (result.ok) {
-                toast.success(t("form.createdToast"));
-                setCreateOpen(false);
-                handleChanged();
-              }
-              return result;
-            }}
-          />
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
+            <ActivityForm
+              users={users}
+              submitLabel={t("form.submitCreate")}
+              defaultValues={{ ownerUserId: currentUserId }}
+              onSubmit={async (values) => {
+                const result = await createActivity(values);
+                if (result.ok) {
+                  toast.success(t("form.createdToast"));
+                  setCreateOpen(false);
+                  handleChanged();
+                }
+                return result;
+              }}
+            />
+          </div>
         </DialogContent>
       </Dialog>
 

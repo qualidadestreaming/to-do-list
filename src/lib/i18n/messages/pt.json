@@ -115,6 +115,7 @@
       "highRange": "Alta (61–125)"
     },
     "form": {
+      "newActivityEyebrow": "Cadastro de atividade",
       "nameLabel": "Nome da Atividade",
       "descriptionLabel": "Descrição",
       "owner": "Responsável",
