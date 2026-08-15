@@ -84,17 +84,43 @@ export function ActivityForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(submit)} className="space-y-4">
+    <form onSubmit={handleSubmit(submit)} className="space-y-5">
       {serverError && (
         <Alert variant="destructive">
           <AlertDescription>{serverError}</AlertDescription>
         </Alert>
       )}
 
-      <div className="space-y-1.5">
-        <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("nameLabel")}</Label>
-        <Input id="name" {...register("name")} maxLength={120} />
-        {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("nameLabel")}</Label>
+          <Input id="name" className="rounded-lg" {...register("name")} maxLength={120} />
+          {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="ownerUserId" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("owner")}</Label>
+          <Controller
+            name="ownerUserId"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger id="ownerUserId" className="w-full rounded-lg">
+                  <SelectValue placeholder={t("ownerPlaceholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map((u) => (
+                    <SelectItem key={u.id} value={u.id}>
+                      {u.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.ownerUserId && (
+            <p className="text-xs text-destructive">{errors.ownerUserId.message}</p>
+          )}
+        </div>
       </div>
 
       <div className="space-y-1.5">
@@ -103,32 +129,7 @@ export function ActivityForm({
         {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="ownerUserId" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("owner")}</Label>
-        <Controller
-          name="ownerUserId"
-          control={control}
-          render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger id="ownerUserId" className="w-full rounded-lg">
-                <SelectValue placeholder={t("ownerPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {users.map((u) => (
-                  <SelectItem key={u.id} value={u.id}>
-                    {u.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-        {errors.ownerUserId && (
-          <p className="text-xs text-destructive">{errors.ownerUserId.message}</p>
-        )}
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="startDate" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("startDate")}</Label>
           <Input id="startDate" type="date" className="rounded-lg" {...register("startDate")} />
@@ -145,7 +146,7 @@ export function ActivityForm({
 
       <div className="space-y-1.5">
         <Label className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("gutMatrix")}</Label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-4">
           {GUT_AXES.map((axis) => (
             <div key={axis.key} className="space-y-1">
               <span className="text-xs text-muted-foreground">{t(axis.labelKey)}</span>

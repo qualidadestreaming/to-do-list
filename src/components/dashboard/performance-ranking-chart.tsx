@@ -39,7 +39,7 @@ export function PerformanceRankingChart({ data }: { data: ActiveOverdueDatum[] }
                 />
                 <Tooltip cursor={{ fill: "var(--muted)" }} />
                 <Legend />
-                <Bar dataKey="active" name={t("active")} stackId="perf" fill="var(--status-ongoing-foreground)" maxBarSize={26}>
+                <Bar dataKey="active" name={t("active")} stackId="perf" fill="var(--gut-medium-foreground)" maxBarSize={26}>
                   <LabelList dataKey="active" position="center" fill="var(--card)" fontSize={12} fontWeight={700} formatter={(value) => (Number(value) > 0 ? value : "")} />
                 </Bar>
                 <Bar dataKey="overdue" name={t("overdueLabel")} stackId="perf" fill="var(--status-overdue-foreground)" radius={[0, 4, 4, 0]} maxBarSize={26}>

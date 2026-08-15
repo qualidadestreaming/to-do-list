@@ -65,7 +65,7 @@ function NewUserDialog({ open, onOpenChange, onCreated }: { open: boolean; onOpe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t("newUser")}</DialogTitle>
         </DialogHeader>
@@ -146,7 +146,7 @@ function EditUserDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{user.name}</DialogTitle>
         </DialogHeader>

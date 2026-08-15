@@ -63,15 +63,15 @@ export function ActivityDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent fitted className="h-[640px] gap-0 sm:max-w-xl">
-        <DialogHeader className="static mx-0 mt-0 gap-1 border-b bg-transparent px-5 pt-5 pb-4">
+      <DialogContent fitted className="h-[760px] max-h-[90vh] gap-0 sm:max-w-2xl">
+        <DialogHeader className="static mx-0 mt-0 gap-1.5 border-b bg-transparent px-6 pt-6 pb-5">
           <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             {t("activityNo", { id: activity.id.slice(0, 8) })}
           </p>
           <DialogTitle className="pr-8 text-base font-bold">{activity.name}</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-wrap items-center gap-2 border-b px-5 py-3">
+        <div className="flex flex-wrap items-center gap-2 border-b px-6 py-3.5">
           <StatusBadge status={activity.status} overdue={overdue} />
           <PriorityBadge priority={activity.priority} />
           <div className="ml-auto flex flex-wrap items-center gap-1.5">
@@ -129,11 +129,11 @@ export function ActivityDetailDialog({
         </div>
 
         {actionError && (
-          <p className="border-b bg-destructive/5 px-5 py-2 text-xs text-destructive">{actionError}</p>
+          <p className="border-b bg-destructive/5 px-6 py-2 text-xs text-destructive">{actionError}</p>
         )}
 
         {showCloseForm && (
-          <div className="flex items-end gap-2 border-b bg-muted/30 px-5 py-3">
+          <div className="flex items-end gap-2 border-b bg-muted/30 px-6 py-3.5">
             <div className="flex-1 space-y-1">
               <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 {t("completedDate")}
@@ -168,7 +168,7 @@ export function ActivityDetailDialog({
         )}
 
         <Tabs defaultValue="detalhes" className="min-h-0 flex-1 gap-0">
-          <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b bg-transparent px-5 py-0">
+          <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b bg-transparent px-6 py-0">
             <TabsTrigger
               value="detalhes"
               className="rounded-none border-b-2 border-transparent px-2 py-2.5 text-xs font-bold text-muted-foreground shadow-none data-active:border-primary data-active:bg-transparent data-active:text-primary"
@@ -182,7 +182,7 @@ export function ActivityDetailDialog({
               {t("tabFollowUp")}
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="detalhes" className="min-h-0 overflow-y-auto px-5 py-4">
+          <TabsContent value="detalhes" className="min-h-0 overflow-y-auto px-6 py-6">
             <ActivityForm
               users={users}
               submitLabel={tForm("submitEdit")}
@@ -207,7 +207,7 @@ export function ActivityDetailDialog({
               }}
             />
           </TabsContent>
-          <TabsContent value="historico" className="min-h-0 overflow-y-auto px-5 py-4">
+          <TabsContent value="historico" className="min-h-0 overflow-y-auto px-6 py-6">
             <FollowUpTimeline activityId={activity.id} users={users} onAdded={onChanged} />
           </TabsContent>
         </Tabs>

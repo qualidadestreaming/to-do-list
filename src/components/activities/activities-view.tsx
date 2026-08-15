@@ -295,13 +295,14 @@ export function ActivitiesView({
       </div>
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>{t("newActivity")}</DialogTitle>
           </DialogHeader>
           <ActivityForm
             users={users}
             submitLabel={t("form.submitCreate")}
+            defaultValues={{ ownerUserId: currentUserId }}
             onSubmit={async (values) => {
               const result = await createActivity(values);
               if (result.ok) {
