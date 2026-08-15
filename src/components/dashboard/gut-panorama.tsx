@@ -15,7 +15,7 @@ export function GutPanorama({ activities }: { activities: Activity[] }) {
   const pct = (n: number) => (total > 0 ? (n / total) * 100 : 0);
 
   return (
-    <div className="rounded-xl border bg-card px-5 py-4">
+    <div className="rounded-xl border bg-card px-5 py-4 shadow-[var(--shadow-card)]">
       <div className="mb-3 flex items-baseline justify-between">
         <h3 className="text-sm font-medium text-foreground">{t("title")}</h3>
         <span className="text-xs text-muted-foreground">{t("subtitle", { count: total })}</span>

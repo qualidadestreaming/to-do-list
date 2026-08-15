@@ -76,54 +76,59 @@ export function SwitchUserDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t("switchUser.title")}</DialogTitle>
+      <DialogContent fitted className="gap-0 sm:max-w-md">
+        <DialogHeader className="static mx-0 mt-0 gap-1.5 border-b bg-transparent px-6 pt-6 pb-5">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            {departmentName}
+          </p>
+          <DialogTitle className="pr-8 text-base font-bold">{t("switchUser.title")}</DialogTitle>
           <DialogDescription>
             {t("switchUser.subtitle", { department: departmentName })}
           </DialogDescription>
         </DialogHeader>
 
-        {errorCode && (
-          <Alert variant="destructive">
-            <AlertDescription>{translateError(errorCode)}</AlertDescription>
-          </Alert>
-        )}
+        <div className="space-y-4 px-6 py-6">
+          {errorCode && (
+            <Alert variant="destructive">
+              <AlertDescription>{translateError(errorCode)}</AlertDescription>
+            </Alert>
+          )}
 
-        {loading ? (
-          <div className="flex justify-center py-6">
-            <Loader2 className="size-5 animate-spin text-muted-foreground" />
+          {loading ? (
+            <div className="flex justify-center py-6">
+              <Loader2 className="size-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <RadioGroup value={selected} onValueChange={setSelected} className="max-h-72 overflow-y-auto">
+              {users.map((u) => (
+                <label
+                  key={u.id}
+                  htmlFor={`switch-user-${u.id}`}
+                  className="flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2 text-sm has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-accent/10"
+                >
+                  <span>{u.name}</span>
+                  <div className="flex items-center gap-2">
+                    {u.role === "gestor" && (
+                      <span className="rounded-full bg-status-ongoing px-2 py-0.5 text-xs text-status-ongoing-foreground">
+                        {t("auth.manager")}
+                      </span>
+                    )}
+                    <RadioGroupItem value={u.id} id={`switch-user-${u.id}`} />
+                  </div>
+                </label>
+              ))}
+            </RadioGroup>
+          )}
+
+          <div className="flex gap-2 pt-2">
+            <Button type="button" variant="outline" className="flex-1 rounded-lg" onClick={() => onOpenChange(false)}>
+              {t("switchUser.cancel")}
+            </Button>
+            <Button type="button" className="flex-1 rounded-lg" disabled={isPending || loading} onClick={handleConfirm}>
+              {isPending && <Loader2 className="size-4 animate-spin" />}
+              {t("switchUser.confirm")}
+            </Button>
           </div>
-        ) : (
-          <RadioGroup value={selected} onValueChange={setSelected} className="max-h-72 overflow-y-auto">
-            {users.map((u) => (
-              <label
-                key={u.id}
-                htmlFor={`switch-user-${u.id}`}
-                className="flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2 text-sm has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-accent/10"
-              >
-                <span>{u.name}</span>
-                <div className="flex items-center gap-2">
-                  {u.role === "gestor" && (
-                    <span className="rounded-full bg-status-ongoing px-2 py-0.5 text-xs text-status-ongoing-foreground">
-                      {t("auth.manager")}
-                    </span>
-                  )}
-                  <RadioGroupItem value={u.id} id={`switch-user-${u.id}`} />
-                </div>
-              </label>
-            ))}
-          </RadioGroup>
-        )}
-
-        <div className="flex gap-2 pt-2">
-          <Button type="button" variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
-            {t("switchUser.cancel")}
-          </Button>
-          <Button type="button" className="flex-1" disabled={isPending || loading} onClick={handleConfirm}>
-            {isPending && <Loader2 className="size-4 animate-spin" />}
-            {t("switchUser.confirm")}
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

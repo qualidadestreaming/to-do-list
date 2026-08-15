@@ -75,7 +75,7 @@ export function NewDepartmentTab() {
             </Alert>
           )}
           <div className="space-y-2">
-            <Label htmlFor="dep-name">{t("name")}</Label>
+            <Label htmlFor="dep-name" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("name")}</Label>
             <Input
               id="dep-name"
               {...register("name", {
@@ -87,7 +87,7 @@ export function NewDepartmentTab() {
             {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="dep-slug">{t("slug")}</Label>
+            <Label htmlFor="dep-slug" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("slug")}</Label>
             <Input
               id="dep-slug"
               {...register("slug", { onChange: () => setSlugTouched(true) })}
@@ -96,12 +96,12 @@ export function NewDepartmentTab() {
             {errors.slug && <p className="text-xs text-destructive">{errors.slug.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="dep-password">{t("password")}</Label>
+            <Label htmlFor="dep-password" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("password")}</Label>
             <Input id="dep-password" type="password" {...register("password")} />
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="dep-manager">{t("managerName")}</Label>
+            <Label htmlFor="dep-manager" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("managerName")}</Label>
             <Input id="dep-manager" {...register("managerName")} />
             {errors.managerName && (
               <p className="text-xs text-destructive">{errors.managerName.message}</p>

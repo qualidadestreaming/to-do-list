@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Dialog,
   DialogContent,
@@ -65,29 +66,32 @@ function NewUserDialog({ open, onOpenChange, onCreated }: { open: boolean; onOpe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t("newUser")}</DialogTitle>
+      <DialogContent fitted className="gap-0 sm:max-w-md">
+        <DialogHeader className="static mx-0 mt-0 gap-1.5 border-b bg-transparent px-6 pt-6 pb-5">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            {t("newUserEyebrow")}
+          </p>
+          <DialogTitle className="pr-8 text-base font-bold">{t("newUser")}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(submit)} className="space-y-4">
+        <form onSubmit={handleSubmit(submit)} className="space-y-4 px-6 py-6">
           {serverError && (
             <Alert variant="destructive">
               <AlertDescription>{serverError}</AlertDescription>
             </Alert>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="name">{t("name")}</Label>
-            <Input id="name" {...register("name")} />
+          <div className="space-y-1.5">
+            <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("name")}</Label>
+            <Input id="name" className="rounded-lg" {...register("name")} />
             {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
-          <div className="space-y-2">
-            <Label>{t("role")}</Label>
+          <div className="space-y-1.5">
+            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("role")}</Label>
             <Controller
               name="role"
               control={control}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full rounded-lg">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -98,7 +102,7 @@ function NewUserDialog({ open, onOpenChange, onCreated }: { open: boolean; onOpe
               )}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full rounded-lg" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="size-4 animate-spin" />}
             {t("create")}
           </Button>
@@ -146,29 +150,32 @@ function EditUserDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{user.name}</DialogTitle>
+      <DialogContent fitted className="gap-0 sm:max-w-md">
+        <DialogHeader className="static mx-0 mt-0 gap-1.5 border-b bg-transparent px-6 pt-6 pb-5">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            {t("editUserEyebrow")}
+          </p>
+          <DialogTitle className="pr-8 text-base font-bold">{user.name}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(submit)} className="space-y-4">
+        <form onSubmit={handleSubmit(submit)} className="space-y-4 px-6 py-6">
           {serverError && (
             <Alert variant="destructive">
               <AlertDescription>{serverError}</AlertDescription>
             </Alert>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="edit-name">{t("name")}</Label>
-            <Input id="edit-name" {...register("name")} />
+          <div className="space-y-1.5">
+            <Label htmlFor="edit-name" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("name")}</Label>
+            <Input id="edit-name" className="rounded-lg" {...register("name")} />
             {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
-          <div className="space-y-2">
-            <Label>{t("role")}</Label>
+          <div className="space-y-1.5">
+            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("role")}</Label>
             <Controller
               name="role"
               control={control}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full rounded-lg">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -180,7 +187,7 @@ function EditUserDialog({
             />
           </div>
           <div className="flex items-center justify-between rounded-lg border p-3">
-            <Label htmlFor="active">{t("active")}</Label>
+            <Label htmlFor="active" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("active")}</Label>
             <Controller
               name="active"
               control={control}
@@ -189,7 +196,7 @@ function EditUserDialog({
               )}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full rounded-lg" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="size-4 animate-spin" />}
             {t("save")}
           </Button>
@@ -274,8 +281,8 @@ export function UsersTab({ users }: { users: AppUser[] }) {
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
-                  {t("noUsers")}
+                <td colSpan={4}>
+                  <EmptyState icon={Users} message={t("noUsers")} />
                 </td>
               </tr>
             )}

@@ -54,14 +54,14 @@ export function PasswordTab() {
             </Alert>
           )}
           <div className="space-y-2">
-            <Label htmlFor="newPassword">{t("newPassword")}</Label>
+            <Label htmlFor="newPassword" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("newPassword")}</Label>
             <Input id="newPassword" type="password" {...register("newPassword")} />
             {errors.newPassword && (
               <p className="text-xs text-destructive">{errors.newPassword.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
+            <Label htmlFor="confirmPassword" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("confirmPassword")}</Label>
             <Input id="confirmPassword" type="password" {...register("confirmPassword")} />
             {errors.confirmPassword && (
               <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>

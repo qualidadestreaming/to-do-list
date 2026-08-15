@@ -174,6 +174,8 @@
       "newDepartment": "New department"
     },
     "users": {
+      "newUserEyebrow": "New user registration",
+      "editUserEyebrow": "Edit user",
       "newUser": "New user",
       "name": "Name",
       "role": "Role",
@@ -248,7 +250,14 @@
       "onGoing": "In progress",
       "closed": "Done",
       "overdue": "Overdue",
-      "onTimePercentage": "% completed on time"
+      "onTimePercentage": "% completed on time",
+      "subTotal": "in the current filter",
+      "subPercentOfTotal": "{pct}% of total",
+      "subOverdueWarn": "needs attention",
+      "subOverdueOk": "none overdue",
+      "subGood": "within target",
+      "subMedium": "watch the target",
+      "subBad": "below target"
     },
     "charts": {
       "statusDistribution": "Distribution by status",

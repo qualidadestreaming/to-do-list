@@ -83,7 +83,7 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
 
   if (step === "user") {
     return (
-      <form onSubmit={handleUserSubmit} className="space-y-5 rounded-2xl border bg-card p-6 shadow-sm">
+      <form onSubmit={handleUserSubmit} className="space-y-5 rounded-2xl border bg-card p-6 shadow-[var(--shadow-card)]">
         <div>
           <p className="text-sm text-muted-foreground">{t("auth.department")}</p>
           <p className="font-medium text-foreground">{departmentName}</p>
@@ -122,7 +122,7 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
           <Button
             type="button"
             variant="outline"
-            className="flex-1"
+            className="flex-1 rounded-lg"
             onClick={() => {
               setStep("department");
               setErrorCode(null);
@@ -131,7 +131,7 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
           >
             {t("auth.back")}
           </Button>
-          <Button type="submit" className="flex-1" disabled={isPending}>
+          <Button type="submit" className="flex-1 rounded-lg" disabled={isPending}>
             {isPending && <Loader2 className="size-4 animate-spin" />}
             {t("auth.enter")}
           </Button>
@@ -141,7 +141,7 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
   }
 
   return (
-    <form onSubmit={handleDepartmentSubmit} className="space-y-5 rounded-2xl border bg-card p-6 shadow-sm">
+    <form onSubmit={handleDepartmentSubmit} className="space-y-5 rounded-2xl border bg-card p-6 shadow-[var(--shadow-card)]">
       {errorCode && (
         <Alert variant="destructive">
           <AlertDescription>{translateError(errorCode)}</AlertDescription>
@@ -151,7 +151,7 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
       <div className="space-y-2">
         <Label htmlFor="department">{t("auth.department")}</Label>
         <Select value={slug} onValueChange={setSlug} required>
-          <SelectTrigger id="department" className="w-full">
+          <SelectTrigger id="department" className="w-full rounded-lg">
             <SelectValue placeholder={t("auth.departmentPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
@@ -172,13 +172,14 @@ export function LoginForm({ departments }: { departments: DepartmentOption[] }) 
         <Input
           id="password"
           type="password"
+          className="rounded-lg"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
       </div>
 
-      <Button type="submit" className="w-full" disabled={isPending}>
+      <Button type="submit" className="w-full rounded-lg" disabled={isPending}>
         {isPending && <Loader2 className="size-4 animate-spin" />}
         {t("auth.continue")}
       </Button>

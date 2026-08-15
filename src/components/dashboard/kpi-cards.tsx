@@ -20,20 +20,39 @@ export function KpiCards({ kpis }: { kpis: DashboardKpis }) {
           ? "text-gut-medium-foreground"
           : "text-status-overdue-foreground";
 
-  const items: { label: string; value: string; accent?: string }[] = [
-    { label: t("total"), value: String(kpis.total) },
-    { label: t("ready"), value: String(kpis.ready) },
-    { label: t("onGoing"), value: String(kpis.onGoing) },
-    { label: t("closed"), value: String(kpis.closed), accent: "text-status-closed-foreground" },
+  const pctOfTotal = (n: number) =>
+    kpis.total > 0 ? t("subPercentOfTotal", { pct: Math.round((n / kpis.total) * 100) }) : undefined;
+
+  const items: { label: string; value: string; accent?: string; sub?: string; subAccent?: string }[] = [
+    { label: t("total"), value: String(kpis.total), sub: t("subTotal") },
+    { label: t("ready"), value: String(kpis.ready), sub: pctOfTotal(kpis.ready) },
+    { label: t("onGoing"), value: String(kpis.onGoing), sub: pctOfTotal(kpis.onGoing) },
+    {
+      label: t("closed"),
+      value: String(kpis.closed),
+      accent: "text-status-closed-foreground",
+      sub: pctOfTotal(kpis.closed),
+    },
     {
       label: t("overdue"),
       value: String(kpis.overdue),
       accent: kpis.overdue > 0 ? "text-status-overdue-foreground" : undefined,
+      sub: kpis.overdue > 0 ? t("subOverdueWarn") : t("subOverdueOk"),
+      subAccent: kpis.overdue > 0 ? "text-status-overdue-foreground" : "text-status-closed-foreground",
     },
     {
       label: t("onTimePercentage"),
       value: kpis.onTimePercentage === null ? "—" : `${kpis.onTimePercentage}%`,
       accent: onTimeColor,
+      sub:
+        kpis.onTimePercentage === null
+          ? undefined
+          : kpis.onTimePercentage >= 80
+            ? t("subGood")
+            : kpis.onTimePercentage >= 50
+              ? t("subMedium")
+              : t("subBad"),
+      subAccent: onTimeColor,
     },
   ];
 
@@ -50,6 +69,11 @@ export function KpiCards({ kpis }: { kpis: DashboardKpis }) {
             <span className={cn("text-3xl font-bold tabular-nums text-foreground", item.accent)}>
               {item.value}
             </span>
+            {item.sub && (
+              <p className={cn("mt-1 text-[11px] font-semibold text-muted-foreground", item.subAccent)}>
+                {item.sub}
+              </p>
+            )}
           </CardContent>
         </Card>
       ))}

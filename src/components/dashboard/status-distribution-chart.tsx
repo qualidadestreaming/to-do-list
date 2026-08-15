@@ -40,7 +40,13 @@ export function StatusDistributionChart({ data }: { data: StatusDatum[] }) {
                 ))}
               </Pie>
               <Tooltip />
-              <Legend verticalAlign="bottom" height={32} />
+              <Legend
+                verticalAlign="bottom"
+                height={32}
+                iconType="circle"
+                iconSize={8}
+                formatter={(value) => <span style={{ color: "var(--muted-foreground)", fontSize: 12, fontWeight: 600 }}>{value}</span>}
+              />
             </PieChart>
           </ResponsiveContainer>
         ) : (
