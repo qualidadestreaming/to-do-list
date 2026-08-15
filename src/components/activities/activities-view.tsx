@@ -133,8 +133,7 @@ export function ActivitiesView({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <Button type="button" onClick={() => setCreateOpen(true)}>
           <Plus className="size-4" />
           {t("newActivity")}

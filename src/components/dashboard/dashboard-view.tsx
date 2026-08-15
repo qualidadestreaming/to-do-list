@@ -95,8 +95,7 @@ export function DashboardView({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <div className="inline-flex gap-0.5 rounded-lg bg-muted p-0.5">
           {(["geral", "pessoal"] as Scope[]).map((s) => (
             <button

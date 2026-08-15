@@ -12,8 +12,6 @@ export function AdminView({ users }: { users: AppUser[] }) {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
-
       <Tabs defaultValue="users">
         <TabsList>
           <TabsTrigger value="users">{t("tabs.users")}</TabsTrigger>
