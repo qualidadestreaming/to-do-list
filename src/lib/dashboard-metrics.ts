@@ -113,45 +113,28 @@ export function computePerformanceByOwner(
     .sort((a, b) => b.total - a.total);
 }
 
-export interface ActivityBreakdownDatum {
+export interface ActiveOverdueDatum {
   ownerId: string;
   name: string;
-  onTime: number;
-  late: number;
-  overdue: number;
   active: number;
+  overdue: number;
   total: number;
 }
 
-/** Generalização de computePerformanceByOwner: em vez de contar só
- * concluídas (on-time/late), reflete QUALQUER recorte filtrado — por isso
- * "Atividades por pessoa" nunca fica vazio, nem quando o filtro é só
- * "Atrasadas" (que são atividades ainda abertas, não concluídas — não
- * existiam no gráfico antigo). */
-export function computeActivityBreakdownByOwner(
+/** Só o que ainda está aberto: em andamento/standby (não atrasado) vs
+ * atrasado — nada de concluídas aqui, pra não poluir o gráfico com
+ * informação que já está no "Fechamento por pessoa" ao lado. */
+export function computeActiveOverdueByOwner(
   activities: Activity[],
   users: AppUser[]
-): ActivityBreakdownDatum[] {
-  const byOwner = new Map<
-    string,
-    { onTime: number; late: number; overdue: number; active: number }
-  >();
+): ActiveOverdueDatum[] {
+  const byOwner = new Map<string, { active: number; overdue: number }>();
 
   for (const activity of activities) {
-    const entry = byOwner.get(activity.owner_user_id) ?? {
-      onTime: 0,
-      late: 0,
-      overdue: 0,
-      active: 0,
-    };
-    if (activity.status === "closed") {
-      if (activity.performance === "on_time") entry.onTime += 1;
-      else if (activity.performance === "late") entry.late += 1;
-    } else if (isOverdue(activity.due_date, activity.status)) {
-      entry.overdue += 1;
-    } else {
-      entry.active += 1;
-    }
+    if (activity.status === "closed") continue;
+    const entry = byOwner.get(activity.owner_user_id) ?? { active: 0, overdue: 0 };
+    if (isOverdue(activity.due_date, activity.status)) entry.overdue += 1;
+    else entry.active += 1;
     byOwner.set(activity.owner_user_id, entry);
   }
 
@@ -160,7 +143,7 @@ export function computeActivityBreakdownByOwner(
       ownerId,
       name: users.find((u) => u.id === ownerId)?.name ?? "—",
       ...counts,
-      total: counts.onTime + counts.late + counts.overdue + counts.active,
+      total: counts.active + counts.overdue,
     }))
     .sort((a, b) => b.total - a.total);
 }

@@ -91,26 +91,26 @@ export function ActivityForm({
         </Alert>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="name">{t("nameLabel")}</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("nameLabel")}</Label>
         <Input id="name" {...register("name")} maxLength={120} />
         {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="title">{t("descriptionLabel")}</Label>
-        <Textarea id="title" rows={3} {...register("title")} />
+      <div className="space-y-1.5">
+        <Label htmlFor="title" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("descriptionLabel")}</Label>
+        <Textarea id="title" rows={3} className="rounded-lg" {...register("title")} />
         {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="ownerUserId">{t("owner")}</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="ownerUserId" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("owner")}</Label>
         <Controller
           name="ownerUserId"
           control={control}
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger id="ownerUserId" className="w-full">
+              <SelectTrigger id="ownerUserId" className="w-full rounded-lg">
                 <SelectValue placeholder={t("ownerPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
@@ -129,22 +129,22 @@ export function ActivityForm({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label htmlFor="startDate">{t("startDate")}</Label>
-          <Input id="startDate" type="date" {...register("startDate")} />
+        <div className="space-y-1.5">
+          <Label htmlFor="startDate" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("startDate")}</Label>
+          <Input id="startDate" type="date" className="rounded-lg" {...register("startDate")} />
           {errors.startDate && (
             <p className="text-xs text-destructive">{errors.startDate.message}</p>
           )}
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="dueDate">{t("dueDate")}</Label>
-          <Input id="dueDate" type="date" {...register("dueDate")} />
+        <div className="space-y-1.5">
+          <Label htmlFor="dueDate" className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("dueDate")}</Label>
+          <Input id="dueDate" type="date" className="rounded-lg" {...register("dueDate")} />
           {errors.dueDate && <p className="text-xs text-destructive">{errors.dueDate.message}</p>}
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label>{t("gutMatrix")}</Label>
+      <div className="space-y-1.5">
+        <Label className="text-[10px] font-bold uppercase tracking-wider text-primary">{t("gutMatrix")}</Label>
         <div className="grid grid-cols-3 gap-3">
           {GUT_AXES.map((axis) => (
             <div key={axis.key} className="space-y-1">
@@ -154,7 +154,7 @@ export function ActivityForm({
                 control={control}
                 render={({ field }) => (
                   <Select value={String(field.value)} onValueChange={(v) => field.onChange(Number(v))}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -179,12 +179,12 @@ export function ActivityForm({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="note">{noteLabel ?? t("note")}</Label>
-        <Textarea id="note" rows={2} {...register("note")} />
+      <div className="space-y-1.5">
+        <Label htmlFor="note" className="text-[10px] font-bold uppercase tracking-wider text-primary">{noteLabel ?? t("note")}</Label>
+        <Textarea id="note" rows={2} className="rounded-lg" {...register("note")} />
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button type="submit" className="w-full rounded-lg" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="size-4 animate-spin" />}
         {submitLabel}
       </Button>

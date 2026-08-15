@@ -134,6 +134,7 @@
       "createdToast": "任务已创建。"
     },
     "detail": {
+      "activityNo": "任务 #{id}",
       "start": "开始",
       "complete": "完成",
       "reopen": "重新打开",
@@ -252,12 +253,10 @@
       "statusDistribution": "按状态分布",
       "gutDistribution": "按 GUT 等级分布",
       "performanceRanking": "按人员统计的任务",
-      "performanceRankingSubtitle": "反映当前筛选条件 — 进行中、已逾期、已完成（按时/延迟）",
+      "performanceRankingSubtitle": "未完成任务 — 进行中 vs 已逾期",
       "closuresByOwner": "按人员统计的完成量",
       "closuresByOwnerSubtitle": "已完成任务总量",
       "active": "进行中",
-      "onTime": "按时完成",
-      "late": "延迟完成",
       "overdueLabel": "已逾期",
       "noData": "当前筛选条件下没有数据。",
       "noCompletedData": "当前筛选条件下没有已完成的任务。"

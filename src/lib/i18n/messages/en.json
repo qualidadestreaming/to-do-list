@@ -134,6 +134,7 @@
       "createdToast": "Activity created."
     },
     "detail": {
+      "activityNo": "Activity #{id}",
       "start": "Start",
       "complete": "Complete",
       "reopen": "Reopen",
@@ -252,12 +253,10 @@
       "statusDistribution": "Distribution by status",
       "gutDistribution": "Distribution by GUT band",
       "performanceRanking": "Activities by person",
-      "performanceRankingSubtitle": "Reflects the current filter — open, overdue, and completed (on time/late)",
+      "performanceRankingSubtitle": "Open activities — in progress vs. overdue",
       "closuresByOwner": "Closures by person",
       "closuresByOwnerSubtitle": "Total volume of completed activities",
-      "active": "Open",
-      "onTime": "On time",
-      "late": "Completed late",
+      "active": "In progress",
       "overdueLabel": "Overdue",
       "noData": "No data for the current filter.",
       "noCompletedData": "No completed activity for the current filter."

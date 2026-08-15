@@ -63,75 +63,84 @@ export function ActivityDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
-        <DialogHeader>
-          <DialogTitle className="pr-6">
-            <span className="mb-2 block text-base font-semibold">{activity.name}</span>
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusBadge status={activity.status} overdue={overdue} />
-              <PriorityBadge priority={activity.priority} />
-            </div>
-          </DialogTitle>
+      <DialogContent fitted className="h-[640px] gap-0 sm:max-w-xl">
+        <DialogHeader className="static mx-0 mt-0 gap-1 border-b bg-transparent px-5 pt-5 pb-4">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            {t("activityNo", { id: activity.id.slice(0, 8) })}
+          </p>
+          <DialogTitle className="pr-8 text-base font-bold">{activity.name}</DialogTitle>
         </DialogHeader>
 
-        {actionError && <p className="text-sm text-destructive">{actionError}</p>}
-
-        <div className="flex flex-wrap gap-2 border-b pb-4">
-          {activity.status === "ready" && (
+        <div className="flex flex-wrap items-center gap-2 border-b px-5 py-3">
+          <StatusBadge status={activity.status} overdue={overdue} />
+          <PriorityBadge priority={activity.priority} />
+          <div className="ml-auto flex flex-wrap items-center gap-1.5">
+            {activity.status === "ready" && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="rounded-lg"
+                disabled={isPending}
+                onClick={() => runAction(() => startActivity(activity.id))}
+              >
+                {t("start")}
+              </Button>
+            )}
+            {activity.status !== "closed" && !showCloseForm && (
+              <Button
+                type="button"
+                size="sm"
+                className="rounded-lg"
+                disabled={isPending}
+                onClick={() => setShowCloseForm(true)}
+              >
+                {t("complete")}
+              </Button>
+            )}
+            {activity.status === "closed" && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="rounded-lg"
+                disabled={isPending}
+                onClick={() => runAction(() => reopenActivity(activity.id))}
+              >
+                {t("reopen")}
+              </Button>
+            )}
             <Button
               type="button"
-              size="sm"
-              variant="outline"
+              size="icon-sm"
+              variant="ghost"
+              className="rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               disabled={isPending}
-              onClick={() => runAction(() => startActivity(activity.id))}
+              title={t("delete")}
+              onClick={() => {
+                if (confirm(t("confirmDelete"))) {
+                  runAction(() => deleteActivity(activity.id));
+                }
+              }}
             >
-              {t("start")}
+              <Trash2 className="size-4" />
             </Button>
-          )}
-          {activity.status !== "closed" && !showCloseForm && (
-            <Button
-              type="button"
-              size="sm"
-              disabled={isPending}
-              onClick={() => setShowCloseForm(true)}
-            >
-              {t("complete")}
-            </Button>
-          )}
-          {activity.status === "closed" && (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              disabled={isPending}
-              onClick={() => runAction(() => reopenActivity(activity.id))}
-            >
-              {t("reopen")}
-            </Button>
-          )}
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            className="ml-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-            disabled={isPending}
-            onClick={() => {
-              if (confirm(t("confirmDelete"))) {
-                runAction(() => deleteActivity(activity.id));
-              }
-            }}
-          >
-            <Trash2 className="size-4" />
-            {t("delete")}
-          </Button>
+          </div>
         </div>
 
+        {actionError && (
+          <p className="border-b bg-destructive/5 px-5 py-2 text-xs text-destructive">{actionError}</p>
+        )}
+
         {showCloseForm && (
-          <div className="flex items-end gap-2 rounded-lg border bg-muted/40 p-3">
+          <div className="flex items-end gap-2 border-b bg-muted/30 px-5 py-3">
             <div className="flex-1 space-y-1">
-              <label className="text-xs text-muted-foreground">{t("completedDate")}</label>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                {t("completedDate")}
+              </label>
               <Input
                 type="date"
+                className="rounded-lg"
                 value={completedDate}
                 onChange={(e) => setCompletedDate(e.target.value)}
               />
@@ -139,6 +148,7 @@ export function ActivityDetailDialog({
             <Button
               type="button"
               size="sm"
+              className="rounded-lg"
               disabled={isPending}
               onClick={() =>
                 runAction(async () => {
@@ -151,18 +161,28 @@ export function ActivityDetailDialog({
               {isPending && <Loader2 className="size-4 animate-spin" />}
               {t("confirm")}
             </Button>
-            <Button type="button" size="sm" variant="ghost" onClick={() => setShowCloseForm(false)}>
+            <Button type="button" size="sm" variant="ghost" className="rounded-lg" onClick={() => setShowCloseForm(false)}>
               {t("cancel")}
             </Button>
           </div>
         )}
 
-        <Tabs defaultValue="detalhes">
-          <TabsList>
-            <TabsTrigger value="detalhes">{t("tabDetails")}</TabsTrigger>
-            <TabsTrigger value="historico">{t("tabFollowUp")}</TabsTrigger>
+        <Tabs defaultValue="detalhes" className="min-h-0 flex-1 gap-0">
+          <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b bg-transparent px-5 py-0">
+            <TabsTrigger
+              value="detalhes"
+              className="rounded-none border-b-2 border-transparent px-2 py-2.5 text-xs font-bold text-muted-foreground shadow-none data-active:border-primary data-active:bg-transparent data-active:text-primary"
+            >
+              {t("tabDetails")}
+            </TabsTrigger>
+            <TabsTrigger
+              value="historico"
+              className="rounded-none border-b-2 border-transparent px-2 py-2.5 text-xs font-bold text-muted-foreground shadow-none data-active:border-primary data-active:bg-transparent data-active:text-primary"
+            >
+              {t("tabFollowUp")}
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="detalhes" className="pt-2">
+          <TabsContent value="detalhes" className="min-h-0 overflow-y-auto px-5 py-4">
             <ActivityForm
               users={users}
               submitLabel={tForm("submitEdit")}
@@ -187,7 +207,7 @@ export function ActivityDetailDialog({
               }}
             />
           </TabsContent>
-          <TabsContent value="historico" className="pt-2">
+          <TabsContent value="historico" className="min-h-0 overflow-y-auto px-5 py-4">
             <FollowUpTimeline activityId={activity.id} users={users} onAdded={onChanged} />
           </TabsContent>
         </Tabs>

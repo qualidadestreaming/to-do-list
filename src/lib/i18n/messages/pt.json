@@ -134,6 +134,7 @@
       "createdToast": "Atividade criada."
     },
     "detail": {
+      "activityNo": "Atividade #{id}",
       "start": "Iniciar",
       "complete": "Concluir",
       "reopen": "Reabrir",
@@ -252,12 +253,10 @@
       "statusDistribution": "Distribuição por status",
       "gutDistribution": "Distribuição por faixa GUT",
       "performanceRanking": "Atividades por pessoa",
-      "performanceRankingSubtitle": "Reflete o filtro atual — em aberto, atrasadas e concluídas (no prazo/com atraso)",
+      "performanceRankingSubtitle": "Atividades em aberto — em andamento vs. atrasadas",
       "closuresByOwner": "Fechamento por pessoa",
       "closuresByOwnerSubtitle": "Volume total de atividades concluídas",
-      "active": "Em aberto",
-      "onTime": "No prazo",
-      "late": "Concluída c/ atraso",
+      "active": "Em andamento",
       "overdueLabel": "Atrasada",
       "noData": "Sem dados para o filtro atual.",
       "noCompletedData": "Nenhuma atividade concluída no filtro atual."

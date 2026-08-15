@@ -37,7 +37,7 @@ export async function getCachedActivities(
       return { activities: (data ?? []) as Activity[], error: false };
     },
     ["activities", departmentId],
-    { tags: [`activities-${departmentId}`], revalidate: 60 }
+    { tags: [`activities-${departmentId}`], revalidate: 900 }
   );
   return fn();
 }
@@ -61,7 +61,7 @@ export async function getCachedDepartmentUsers(
       return { users: (data ?? []) as AppUser[], error: false };
     },
     ["department-users", departmentId],
-    { tags: [`users-${departmentId}`], revalidate: 60 }
+    { tags: [`users-${departmentId}`], revalidate: 900 }
   );
   return fn();
 }

@@ -51,15 +51,23 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  fitted = false,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
+  /** Quando true, não envolve o conteúdo no wrapper padrão p-4/grid gap-4 —
+   * o próprio conteúdo controla padding/divisórias (usado por popups tipo
+   * "drawer" com cabeçalho/abas full-bleed, ex. ActivityDetailDialog). */
+  fitted?: boolean
 }) {
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
         className={cn(
           "fixed top-1/2 left-1/2 z-50 flex max-h-[85vh] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-popover text-sm text-popover-foreground ring-1 ring-foreground/10 shadow-[0_24px_70px_rgba(0,0,0,0.25)] duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
@@ -68,9 +76,13 @@ function DialogContent({
       >
         {/* O botão de fechar fica FORA da área que rola — senão ele sobe
             junto com o conteúdo e some do canto ao rolar a tela. */}
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <div className="grid gap-4">{children}</div>
-        </div>
+        {fitted ? (
+          <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+        ) : (
+          <div className="min-h-0 flex-1 overflow-y-auto p-4">
+            <div className="grid gap-4">{children}</div>
+          </div>
+        )}
         {showCloseButton && (
           <DialogPrimitive.Close data-slot="dialog-close" asChild>
             <Button
