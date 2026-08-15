@@ -172,7 +172,7 @@ export function ActivitiesView({
         </Alert>
       )}
 
-      <div className="flex flex-wrap gap-2 rounded-xl border bg-card p-3">
+      <div className="flex flex-wrap gap-2 rounded-xl border bg-card p-3 shadow-[var(--shadow-card)]">
         <Input
           placeholder={t("searchPlaceholder")}
           value={search}
@@ -232,7 +232,7 @@ export function ActivitiesView({
         </Select>
       </div>
 
-      <div className="overflow-hidden rounded-xl border bg-card">
+      <div className="overflow-hidden rounded-xl border bg-card shadow-[var(--shadow-card)]">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left text-xs uppercase text-muted-foreground">
@@ -250,7 +250,7 @@ export function ActivitiesView({
                 <tr
                   key={activity.id}
                   onClick={() => setSelectedId(activity.id)}
-                  className="cursor-pointer align-top hover:bg-accent/5"
+                  className="cursor-pointer align-top hover:bg-brand-purple/5"
                 >
                   <td className="max-w-[220px] px-4 py-3 font-medium text-foreground">
                     {activity.name}

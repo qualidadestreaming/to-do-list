@@ -66,24 +66,26 @@ export function Sidebar({
       )}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 md:sticky md:top-0 md:h-svh md:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-transform duration-200 md:sticky md:top-0 md:h-svh md:translate-x-0",
           collapsed ? "md:w-16" : "md:w-64",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex items-center gap-2 px-4 py-4">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15 text-sm font-bold">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-purple to-brand-blue text-sm font-bold text-white">
             M
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="truncate text-sm font-bold leading-tight">Multilaser</p>
-              <p className="truncate text-[11px] leading-tight text-sidebar-foreground/60">TDL</p>
+              <p className="truncate text-sm font-bold leading-tight">
+                grupo<span className="text-brand-purple">Multilaser</span>
+              </p>
+              <p className="truncate text-[11px] leading-tight text-muted-foreground">TDL</p>
             </div>
           )}
           <button
             type="button"
-            className="ml-auto rounded-md p-1 text-sidebar-foreground/70 hover:bg-white/10 md:hidden"
+            className="ml-auto rounded-md p-1 text-muted-foreground hover:bg-sidebar-accent md:hidden"
             onClick={onCloseMobile}
             aria-label={tSidebar("closeMenu")}
           >
@@ -92,8 +94,8 @@ export function Sidebar({
         </div>
 
         {!collapsed && (
-          <div className="mx-3 mb-4 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wide text-sidebar-foreground/50">
+          <div className="mx-3 mb-4 rounded-lg border border-sidebar-border bg-muted/40 px-3 py-2">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
               {tSidebar("department")}
             </p>
             <p className="truncate text-sm font-semibold">{session.departmentName}</p>
@@ -113,8 +115,8 @@ export function Sidebar({
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   active
-                    ? "bg-white text-sidebar"
-                    : "text-sidebar-foreground/80 hover:bg-white/10 hover:text-sidebar-foreground"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
               >
                 <Icon className="size-[18px] shrink-0" />
@@ -126,35 +128,35 @@ export function Sidebar({
 
         <div className="flex-1" />
 
-        <div className="hidden border-t border-white/10 p-2 md:block">
+        <div className="hidden border-t border-sidebar-border p-2 md:block">
           <button
             type="button"
             onClick={onToggleCollapsed}
             aria-label={collapsed ? tSidebar("expand") : tSidebar("collapse")}
-            className="flex w-full items-center justify-center rounded-lg p-2 text-sidebar-foreground/70 hover:bg-white/10"
+            className="flex w-full items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-sidebar-accent"
           >
             {collapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
           </button>
         </div>
 
-        <div className="border-t border-white/10 p-3">
+        <div className="border-t border-sidebar-border p-3">
           {!collapsed && (
             <button
               type="button"
               onClick={() => setSwitchOpen(true)}
               title={tSidebar("switchUser")}
-              className="mb-2 flex w-full items-center gap-2 rounded-lg px-1 py-1 text-left hover:bg-white/10"
+              className="mb-2 flex w-full items-center gap-2 rounded-lg px-1 py-1 text-left hover:bg-sidebar-accent"
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-xs font-bold">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-purple/10 text-xs font-bold text-brand-purple">
                 {initials(session.userName)}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{session.userName}</p>
-                <p className="truncate text-[11px] text-sidebar-foreground/60">
+                <p className="truncate text-[11px] text-muted-foreground">
                   {session.userRole === "gestor" ? "Gestor" : "Colaborador"}
                 </p>
               </div>
-              <Users2 className="size-4 shrink-0 text-sidebar-foreground/50" />
+              <Users2 className="size-4 shrink-0 text-muted-foreground" />
             </button>
           )}
           {collapsed && (
@@ -162,9 +164,9 @@ export function Sidebar({
               type="button"
               onClick={() => setSwitchOpen(true)}
               title={tSidebar("switchUser")}
-              className="mb-2 flex w-full items-center justify-center rounded-lg p-2 text-sidebar-foreground/70 hover:bg-white/10"
+              className="mb-2 flex w-full items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-sidebar-accent"
             >
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-[11px] font-bold">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-purple/10 text-[11px] font-bold text-brand-purple">
                 {initials(session.userName)}
               </div>
             </button>

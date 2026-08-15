@@ -40,7 +40,7 @@ export function KpiCards({ kpis }: { kpis: DashboardKpis }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
       {items.map((item) => (
-        <Card key={item.label} className="gap-1 py-4 shadow-none">
+        <Card key={item.label} className="gap-1 py-4">
           <CardHeader className="px-4">
             <CardTitle className="text-xs font-medium text-muted-foreground">
               {item.label}

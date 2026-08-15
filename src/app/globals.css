@@ -114,14 +114,20 @@
   --chart-5: #b8b8c2;
   --radius: 0.625rem;
 
-  --sidebar: var(--brand-purple);
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ffffff;
-  --sidebar-primary-foreground: var(--brand-purple);
-  --sidebar-accent: var(--brand-purple-dark);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: var(--brand-purple-dark);
-  --sidebar-ring: var(--brand-blue-light);
+  /* Sidebar clara com borda fina (padrão Hisense Ações), não mais bloco roxo
+     cheio — só o item de navegação ativo ganha o preenchimento de marca. */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: var(--brand-purple);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1ebfb;
+  --sidebar-accent-foreground: var(--brand-purple);
+  --sidebar-border: #dcdce3;
+  --sidebar-ring: var(--brand-blue);
+
+  /* Sombra suave em duas camadas (padrão Hisense Ações) — cards deixam de
+     ser só borda-fina-sem-sombra e ganham profundidade sutil. */
+  --shadow-card: 0 1px 2px rgba(30, 10, 80, 0.04), 0 4px 14px rgba(30, 10, 80, 0.06);
 
   --gut-low: #e3f5e9;
   --gut-low-foreground: #1e7a42;
@@ -165,14 +171,16 @@
   --chart-4: #6a7ce0;
   --chart-5: #6b6b76;
 
-  --sidebar: #1a0640;
+  --sidebar: #1c1c20;
   --sidebar-foreground: #f2f2f5;
-  --sidebar-primary: #ffffff;
-  --sidebar-primary-foreground: var(--brand-purple-dark);
-  --sidebar-accent: #2a0f5c;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #2a0f5c;
+  --sidebar-primary: var(--brand-blue-light);
+  --sidebar-primary-foreground: #121214;
+  --sidebar-accent: #2c2c33;
+  --sidebar-accent-foreground: var(--brand-blue-light);
+  --sidebar-border: #2c2c33;
   --sidebar-ring: var(--brand-blue-light);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 18px rgba(0, 0, 0, 0.35);
 
   --gut-low: #163726;
   --gut-low-foreground: #6fd89a;
