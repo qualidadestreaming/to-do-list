@@ -73,11 +73,12 @@
 }
 
 :root {
-  /* Fonte oficial: Arial. Não é hospedada via next/font/google (Google Fonts não
-     distribui Arial) — usamos a pilha de fontes do sistema operacional, que
-     entrega Arial de verdade no Windows/macOS sem custo de carregamento. */
-  --font-sans: Arial, "Helvetica Neue", Helvetica, -apple-system,
-    "Segoe UI", sans-serif;
+  /* Fonte oficial: Inter (via next/font/google, self-hosted no build) —
+     troca da pilha de sistema (Arial) por uma fonte desenhada pra UI,
+     pedido explícito do usuário por um visual mais profissional em todo
+     o sistema. --font-inter é a CSS var que o next/font injeta no <html>. */
+  --font-sans: var(--font-inter), -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
 
   /* Identidade visual oficial Grupo Multilaser (fixa, não varia com o tema) */
   --brand-purple: #5000bf;
