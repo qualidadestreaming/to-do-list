@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   Dialog,
@@ -16,15 +16,9 @@ import { ActivityForm } from "@/components/activities/activity-form";
 import { FollowUpTimeline } from "@/components/activities/follow-up-timeline";
 import { PriorityBadge } from "@/components/activities/priority-badge";
 import { StatusBadge, isOverdue } from "@/components/activities/status-badge";
-import {
-  closeActivity,
-  deleteActivity,
-  reopenActivity,
-  startActivity,
-  updateActivity,
-} from "@/lib/actions/activity-actions";
+import { deleteActivity, updateActivity } from "@/lib/actions/activity-actions";
 import { useActivityErrorTranslator, type ActivityActionResult } from "@/lib/i18n/activity-errors";
-import type { Activity, AppUser } from "@/types/database";
+import type { Activity, ActivityStatus, AppUser } from "@/types/database";
 
 export function ActivityDetailDialog({
   activity,
@@ -44,10 +38,27 @@ export function ActivityDetailDialog({
   const translateError = useActivityErrorTranslator();
   const [isPending, startTransition] = useTransition();
   const [showCloseForm, setShowCloseForm] = useState(false);
-  const [completedDate, setCompletedDate] = useState(new Date().toISOString().slice(0, 10));
   const [actionError, setActionError] = useState<string | null>(null);
 
-  const overdue = isOverdue(activity.due_date, activity.status);
+  // Status "pendente": Iniciar/Concluir/Reabrir só mexem aqui. O badge no
+  // topo já reflete a mudança, mas nada vai pro banco até o usuário clicar
+  // em "Salvar alterações" (que envia isso junto no updateActivity).
+  const [pendingStatus, setPendingStatus] = useState<ActivityStatus>(activity.status);
+  const [pendingCompletedDate, setPendingCompletedDate] = useState(
+    activity.completed_date ?? new Date().toISOString().slice(0, 10)
+  );
+
+  // Reabrir o popup em outra atividade (ou depois de um salvamento) precisa
+  // descartar o rascunho de status da anterior.
+  useEffect(() => {
+    setPendingStatus(activity.status);
+    setPendingCompletedDate(activity.completed_date ?? new Date().toISOString().slice(0, 10));
+    setShowCloseForm(false);
+    setActionError(null);
+  }, [activity.id, activity.status, activity.completed_date]);
+
+  const statusChanged = pendingStatus !== activity.status;
+  const overdue = isOverdue(activity.due_date, pendingStatus);
 
   function runAction(action: () => Promise<ActivityActionResult>) {
     setActionError(null);
@@ -72,22 +83,22 @@ export function ActivityDetailDialog({
         </DialogHeader>
 
         <div className="flex flex-wrap items-center gap-2 border-b px-6 py-3.5">
-          <StatusBadge status={activity.status} overdue={overdue} />
+          <StatusBadge status={pendingStatus} overdue={overdue} />
           <PriorityBadge priority={activity.priority} />
           <div className="ml-auto flex flex-wrap items-center gap-1.5">
-            {activity.status === "ready" && (
+            {pendingStatus === "ready" && (
               <Button
                 type="button"
                 size="sm"
                 variant="outline"
                 className="rounded-lg"
                 disabled={isPending}
-                onClick={() => runAction(() => startActivity(activity.id))}
+                onClick={() => setPendingStatus("on_going")}
               >
                 {t("start")}
               </Button>
             )}
-            {activity.status !== "closed" && !showCloseForm && (
+            {pendingStatus !== "closed" && !showCloseForm && (
               <Button
                 type="button"
                 size="sm"
@@ -98,14 +109,14 @@ export function ActivityDetailDialog({
                 {t("complete")}
               </Button>
             )}
-            {activity.status === "closed" && (
+            {pendingStatus === "closed" && (
               <Button
                 type="button"
                 size="sm"
                 variant="outline"
                 className="rounded-lg"
                 disabled={isPending}
-                onClick={() => runAction(() => reopenActivity(activity.id))}
+                onClick={() => setPendingStatus("on_going")}
               >
                 {t("reopen")}
               </Button>
@@ -128,6 +139,12 @@ export function ActivityDetailDialog({
           </div>
         </div>
 
+        {statusChanged && (
+          <p className="border-b bg-gut-medium/40 px-6 py-2 text-xs font-semibold text-gut-medium-foreground">
+            {t("unsavedStatus")}
+          </p>
+        )}
+
         {actionError && (
           <p className="border-b bg-destructive/5 px-6 py-2 text-xs text-destructive">{actionError}</p>
         )}
@@ -141,24 +158,19 @@ export function ActivityDetailDialog({
               <Input
                 type="date"
                 className="rounded-lg"
-                value={completedDate}
-                onChange={(e) => setCompletedDate(e.target.value)}
+                value={pendingCompletedDate}
+                onChange={(e) => setPendingCompletedDate(e.target.value)}
               />
             </div>
             <Button
               type="button"
               size="sm"
               className="rounded-lg"
-              disabled={isPending}
-              onClick={() =>
-                runAction(async () => {
-                  const result = await closeActivity({ activityId: activity.id, completedDate });
-                  if (result.ok) setShowCloseForm(false);
-                  return result;
-                })
-              }
+              onClick={() => {
+                setPendingStatus("closed");
+                setShowCloseForm(false);
+              }}
             >
-              {isPending && <Loader2 className="size-4 animate-spin" />}
               {t("confirm")}
             </Button>
             <Button type="button" size="sm" variant="ghost" className="rounded-lg" onClick={() => setShowCloseForm(false)}>
@@ -190,7 +202,11 @@ export function ActivityDetailDialog({
                 tendencia: activity.tendencia as 1 | 2 | 3 | 4 | 5,
               }}
               onSubmit={async (values) => {
-                const result = await updateActivity(activity.id, values);
+                const result = await updateActivity(activity.id, {
+                  ...values,
+                  status: pendingStatus,
+                  completedDate: pendingStatus === "closed" ? pendingCompletedDate : "",
+                });
                 if (result.ok) {
                   onChanged();
                   onOpenChange(false);

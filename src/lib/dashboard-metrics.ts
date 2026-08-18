@@ -64,19 +64,19 @@ export interface PerformanceDatum {
   total: number;
 }
 
-export interface ClosureDatum {
+export interface OwnerTotalDatum {
   ownerId: string;
   name: string;
   count: number;
 }
 
-/** Volume total de atividades concluídas por responsável — throughput, sem
- * distinguir no-prazo/atrasada (isso já existe em computePerformanceByOwner,
- * que mede qualidade, não volume). */
-export function computeClosuresByOwner(activities: Activity[], users: AppUser[]): ClosureDatum[] {
+/** Volume TOTAL de atividades por responsável, sem filtrar status — conta
+ * standby, em andamento, atrasadas e concluídas juntas. É a "visão geral"
+ * de carga por pessoa; o recorte por situação fica no gráfico ao lado
+ * (computeActiveOverdueByOwner). */
+export function computeTotalByOwner(activities: Activity[], users: AppUser[]): OwnerTotalDatum[] {
   const byOwner = new Map<string, number>();
   for (const activity of activities) {
-    if (activity.status !== "closed") continue;
     byOwner.set(activity.owner_user_id, (byOwner.get(activity.owner_user_id) ?? 0) + 1);
   }
   return Array.from(byOwner.entries())
@@ -121,9 +121,14 @@ export interface ActiveOverdueDatum {
   total: number;
 }
 
-/** Só o que ainda está aberto: em andamento/standby (não atrasado) vs
- * atrasado — nada de concluídas aqui, pra não poluir o gráfico com
- * informação que já está no "Fechamento por pessoa" ao lado. */
+/** Recorte de "em andamento" apenas (status on_going): das que a pessoa tem
+ * em andamento, quantas já passaram do prazo. As duas fatias são exclusivas
+ * e somam o total em andamento — ex: 7 em andamento com 2 vencidas vira
+ * 5 "Em andamento" + 2 "Atrasada".
+ *
+ * Standby e concluídas ficam FORA de propósito: standby ainda não começou
+ * (inflava a barra "em andamento" antes) e concluída já é contada no
+ * gráfico "Visão geral por pessoa" ao lado. */
 export function computeActiveOverdueByOwner(
   activities: Activity[],
   users: AppUser[]
@@ -131,7 +136,7 @@ export function computeActiveOverdueByOwner(
   const byOwner = new Map<string, { active: number; overdue: number }>();
 
   for (const activity of activities) {
-    if (activity.status === "closed") continue;
+    if (activity.status !== "on_going") continue;
     const entry = byOwner.get(activity.owner_user_id) ?? { active: 0, overdue: 0 };
     if (isOverdue(activity.due_date, activity.status)) entry.overdue += 1;
     else entry.active += 1;

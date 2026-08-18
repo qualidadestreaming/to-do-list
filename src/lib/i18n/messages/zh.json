@@ -97,7 +97,14 @@
       "sortPriorityDesc": "优先级从高到低",
       "sortPriorityAsc": "优先级从低到高",
       "sortDueDate": "最近截止日期",
-      "sortDueDateDesc": "最远截止日期"
+      "sortDueDateDesc": "最远截止日期",
+      "pageSize": "显示",
+      "show": "显示 {count} 条",
+      "showAll": "显示全部"
+    },
+    "pagination": {
+      "showing": "显示 {shown} / {total}",
+      "loadMore": "查看更多"
     },
     "status": {
       "ready": "待命",
@@ -136,6 +143,7 @@
     },
     "detail": {
       "activityNo": "任务 #{id}",
+      "unsavedStatus": "状态已更改 — 请点击“保存更改”以生效。",
       "start": "开始",
       "complete": "完成",
       "reopen": "重新打开",
@@ -263,12 +271,13 @@
       "statusDistribution": "按状态分布",
       "gutDistribution": "按 GUT 等级分布",
       "performanceRanking": "按人员统计的任务",
-      "performanceRankingSubtitle": "未完成任务 — 进行中 vs 已逾期",
-      "closuresByOwner": "按人员统计的完成量",
-      "closuresByOwnerSubtitle": "已完成任务总量",
+      "performanceRankingSubtitle": "进行中的任务 — 未逾期 vs 已逾期",
+      "overviewByOwner": "按人员总览",
+      "overviewByOwnerSubtitle": "所有状态的任务总数",
       "active": "进行中",
       "overdueLabel": "已逾期",
       "noData": "当前筛选条件下没有数据。",
+      "noOngoingData": "当前筛选条件下没有进行中的任务。",
       "noCompletedData": "当前筛选条件下没有已完成的任务。"
     }
   }

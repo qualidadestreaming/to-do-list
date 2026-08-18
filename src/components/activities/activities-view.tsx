@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ListChecks, Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -41,6 +41,13 @@ type SortOption =
   | "due_date_asc"
   | "due_date_desc";
 type Scope = "minhas" | "todas";
+/** Quantas linhas renderizar de uma vez. A lista tem centenas de itens e
+ * cada linha monta um popover de responsável — renderizar tudo de cara
+ * deixava a tela pesada. "all" só quando o usuário pedir. */
+type PageSize = 50 | 100 | "all";
+// Sem anotar como PageSize de propósito: assim o TS infere o literal 50 e o
+// valor continua servindo onde só `number` é aceito (o estado `shown`).
+const DEFAULT_PAGE_SIZE = 50;
 
 function formatDate(iso: string | null) {
   if (!iso) return "—";
@@ -72,6 +79,8 @@ export function ActivitiesView({
   const [bandFilter, setBandFilter] = useState<GutBandKey | "all">("all");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortOption>("created_desc");
+  const [pageSize, setPageSize] = useState<PageSize>(DEFAULT_PAGE_SIZE);
+  const [shown, setShown] = useState<number>(DEFAULT_PAGE_SIZE);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -127,6 +136,18 @@ export function ActivitiesView({
 
     return sorted;
   }, [scoped, scope, statusFilter, ownerFilter, bandFilter, search, sort]);
+
+  // Trocar de aba/filtro/ordenação recomeça a paginação do topo — senão o
+  // "ver mais" de uma busca anterior continuaria valendo para a nova lista.
+  useEffect(() => {
+    setShown(pageSize === "all" ? Number.POSITIVE_INFINITY : pageSize);
+  }, [pageSize, scope, statusFilter, ownerFilter, bandFilter, search, sort]);
+
+  const visible = useMemo(
+    () => (shown === Number.POSITIVE_INFINITY ? filtered : filtered.slice(0, shown)),
+    [filtered, shown]
+  );
+  const hasMore = visible.length < filtered.length;
 
   function handleChanged() {
     router.refresh();
@@ -230,6 +251,19 @@ export function ActivitiesView({
             <SelectItem value="due_date_desc">{t("filters.sortDueDateDesc")}</SelectItem>
           </SelectContent>
         </Select>
+        <Select
+          value={String(pageSize)}
+          onValueChange={(v) => setPageSize(v === "all" ? "all" : (Number(v) as PageSize))}
+        >
+          <SelectTrigger className="w-full sm:w-36">
+            <SelectValue placeholder={t("filters.pageSize")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="50">{t("filters.show", { count: 50 })}</SelectItem>
+            <SelectItem value="100">{t("filters.show", { count: 100 })}</SelectItem>
+            <SelectItem value="all">{t("filters.showAll")}</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="overflow-hidden rounded-xl border bg-card shadow-[var(--shadow-card)]">
@@ -246,7 +280,7 @@ export function ActivitiesView({
               </tr>
             </thead>
             <tbody className="divide-y">
-              {filtered.map((activity) => (
+              {visible.map((activity) => (
                 <tr
                   key={activity.id}
                   onClick={() => setSelectedId(activity.id)}
@@ -292,6 +326,26 @@ export function ActivitiesView({
             </tbody>
           </table>
         </div>
+        {filtered.length > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t bg-muted/30 px-4 py-3">
+            <span className="text-xs text-muted-foreground">
+              {t("pagination.showing", { shown: visible.length, total: filtered.length })}
+            </span>
+            {hasMore && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-lg"
+                onClick={() =>
+                  setShown((prev) => prev + (pageSize === "all" ? DEFAULT_PAGE_SIZE : pageSize))
+                }
+              >
+                {t("pagination.loadMore")}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>

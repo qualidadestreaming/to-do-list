@@ -17,9 +17,9 @@ import { GutPanorama } from "@/components/dashboard/gut-panorama";
 import { StatusDistributionChart } from "@/components/dashboard/status-distribution-chart";
 import { GutBandChart } from "@/components/dashboard/gut-band-chart";
 import { PerformanceRankingChart } from "@/components/dashboard/performance-ranking-chart";
-import { ClosuresByOwnerChart } from "@/components/dashboard/closures-by-owner-chart";
+import { OverviewByOwnerChart } from "@/components/dashboard/overview-by-owner-chart";
 import {
-  computeClosuresByOwner,
+  computeTotalByOwner,
   computeGutBandDistribution,
   computeKpis,
   computeActiveOverdueByOwner,
@@ -91,7 +91,7 @@ export function DashboardView({
     () => computeActiveOverdueByOwner(filtered, users),
     [filtered, users]
   );
-  const closuresData = useMemo(() => computeClosuresByOwner(filtered, users), [filtered, users]);
+  const totalsData = useMemo(() => computeTotalByOwner(filtered, users), [filtered, users]);
 
   return (
     <div className="space-y-4">
@@ -194,7 +194,7 @@ export function DashboardView({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <ClosuresByOwnerChart data={closuresData} />
+        <OverviewByOwnerChart data={totalsData} />
         <PerformanceRankingChart data={performanceData} />
       </div>
     </div>

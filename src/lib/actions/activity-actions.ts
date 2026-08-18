@@ -5,10 +5,10 @@ import { createSessionClient } from "@/lib/supabase/server";
 import { getSession } from "@/lib/auth/session";
 import {
   activityFormSchema,
-  closeActivitySchema,
   followUpSchema,
   type ActivityFormValues,
 } from "@/lib/validation/activity";
+import type { Activity } from "@/types/database";
 
 // Códigos de erro (não texto) — o client traduz para o idioma ativo via
 // next-intl. "validation" significa que o zod já rejeitou os dados (a
@@ -102,19 +102,30 @@ export async function updateActivity(
   }
   const values = parsed.data;
 
+  const patch: Partial<Activity> = {
+    owner_user_id: values.ownerUserId,
+    name: values.name,
+    title: values.title,
+    start_date: values.startDate,
+    due_date: values.dueDate || null,
+    gravidade: values.gravidade,
+    urgencia: values.urgencia,
+    tendencia: values.tendencia,
+  };
+
+  // Mudança de status vem no mesmo salvamento do resto do formulário.
+  // completed_date acompanha o status por causa da constraint da tabela:
+  // fechada exige data, qualquer outro status exige null.
+  if (values.status) {
+    patch.status = values.status;
+    patch.completed_date =
+      values.status === "closed" ? (values.completedDate ?? null) : null;
+  }
+
   const supabase = await createSessionClient();
   const { error } = await supabase
     .from("activities")
-    .update({
-      owner_user_id: values.ownerUserId,
-      name: values.name,
-      title: values.title,
-      start_date: values.startDate,
-      due_date: values.dueDate || null,
-      gravidade: values.gravidade,
-      urgencia: values.urgencia,
-      tendencia: values.tendencia,
-    })
+    .update(patch)
     .eq("id", activityId);
 
   if (error) {
@@ -152,69 +163,9 @@ export async function reassignActivity(activityId: string, newOwnerId: string): 
   return { ok: true };
 }
 
-export async function startActivity(activityId: string): Promise<ActionResult> {
-  const session = await getSession();
-  if (!session) return { ok: false, errorCode: "session_expired" };
-
-  const supabase = await createSessionClient();
-  const { error } = await supabase
-    .from("activities")
-    .update({ status: "on_going" })
-    .eq("id", activityId)
-    .eq("status", "ready");
-
-  if (error) {
-    console.error("startActivity", error);
-    return { ok: false, errorCode: "start_failed" };
-  }
-  invalidateActivitiesCache(session.departmentId);
-  return { ok: true };
-}
-
-export async function closeActivity(input: {
-  activityId: string;
-  completedDate: string;
-}): Promise<ActionResult> {
-  const session = await getSession();
-  if (!session) return { ok: false, errorCode: "session_expired" };
-
-  const parsed = closeActivitySchema.safeParse(input);
-  if (!parsed.success) {
-    return { ok: false, errorCode: "validation", validationMessage: parsed.error.issues[0]?.message };
-  }
-
-  const supabase = await createSessionClient();
-  const { error } = await supabase
-    .from("activities")
-    .update({ status: "closed", completed_date: parsed.data.completedDate })
-    .eq("id", parsed.data.activityId);
-
-  if (error) {
-    console.error("closeActivity", error);
-    return { ok: false, errorCode: "close_failed" };
-  }
-  invalidateActivitiesCache(session.departmentId);
-  return { ok: true };
-}
-
-export async function reopenActivity(activityId: string): Promise<ActionResult> {
-  const session = await getSession();
-  if (!session) return { ok: false, errorCode: "session_expired" };
-
-  const supabase = await createSessionClient();
-  const { error } = await supabase
-    .from("activities")
-    .update({ status: "on_going", completed_date: null })
-    .eq("id", activityId)
-    .eq("status", "closed");
-
-  if (error) {
-    console.error("reopenActivity", error);
-    return { ok: false, errorCode: "reopen_failed" };
-  }
-  invalidateActivitiesCache(session.departmentId);
-  return { ok: true };
-}
+// startActivity/closeActivity/reopenActivity foram removidas: gravavam o
+// status na hora do clique. Agora Iniciar/Concluir/Reabrir só marcam a
+// intenção na tela e o status vai junto no updateActivity ao salvar.
 
 export async function addFollowUp(input: {
   activityId: string;

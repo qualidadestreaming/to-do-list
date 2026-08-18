@@ -97,7 +97,14 @@
       "sortPriorityDesc": "Highest priority first",
       "sortPriorityAsc": "Lowest priority first",
       "sortDueDate": "Nearest due date",
-      "sortDueDateDesc": "Furthest due date"
+      "sortDueDateDesc": "Furthest due date",
+      "pageSize": "Show",
+      "show": "Show {count}",
+      "showAll": "Show all"
+    },
+    "pagination": {
+      "showing": "Showing {shown} of {total}",
+      "loadMore": "Load more"
     },
     "status": {
       "ready": "Standby",
@@ -136,6 +143,7 @@
     },
     "detail": {
       "activityNo": "Activity #{id}",
+      "unsavedStatus": "Status changed — click \"Save changes\" to apply.",
       "start": "Start",
       "complete": "Complete",
       "reopen": "Reopen",
@@ -263,12 +271,13 @@
       "statusDistribution": "Distribution by status",
       "gutDistribution": "Distribution by GUT band",
       "performanceRanking": "Activities by person",
-      "performanceRankingSubtitle": "Open activities — in progress vs. overdue",
-      "closuresByOwner": "Closures by person",
-      "closuresByOwnerSubtitle": "Total volume of completed activities",
+      "performanceRankingSubtitle": "In-progress activities — on time vs. overdue",
+      "overviewByOwner": "Overview by person",
+      "overviewByOwnerSubtitle": "Total activities, across all statuses",
       "active": "In progress",
       "overdueLabel": "Overdue",
       "noData": "No data for the current filter.",
+      "noOngoingData": "No in-progress activity for the current filter.",
       "noCompletedData": "No completed activity for the current filter."
     }
   }

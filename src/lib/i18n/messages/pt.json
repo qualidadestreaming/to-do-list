@@ -97,7 +97,14 @@
       "sortPriorityDesc": "Maior prioridade primeiro",
       "sortPriorityAsc": "Menor prioridade primeiro",
       "sortDueDate": "Prazo mais próximo",
-      "sortDueDateDesc": "Prazo mais distante"
+      "sortDueDateDesc": "Prazo mais distante",
+      "pageSize": "Exibir",
+      "show": "Exibir {count}",
+      "showAll": "Exibir tudo"
+    },
+    "pagination": {
+      "showing": "Mostrando {shown} de {total}",
+      "loadMore": "Ver mais"
     },
     "status": {
       "ready": "Standby",
@@ -136,6 +143,7 @@
     },
     "detail": {
       "activityNo": "Atividade #{id}",
+      "unsavedStatus": "Status alterado — clique em \"Salvar alterações\" para gravar.",
       "start": "Iniciar",
       "complete": "Concluir",
       "reopen": "Reabrir",
@@ -263,12 +271,13 @@
       "statusDistribution": "Distribuição por status",
       "gutDistribution": "Distribuição por faixa GUT",
       "performanceRanking": "Atividades por pessoa",
-      "performanceRankingSubtitle": "Atividades em aberto — em andamento vs. atrasadas",
-      "closuresByOwner": "Fechamento por pessoa",
-      "closuresByOwnerSubtitle": "Volume total de atividades concluídas",
+      "performanceRankingSubtitle": "Atividades em andamento — dentro do prazo vs. atrasadas",
+      "overviewByOwner": "Visão geral por pessoa",
+      "overviewByOwnerSubtitle": "Total de atividades, em todas as situações",
       "active": "Em andamento",
       "overdueLabel": "Atrasada",
       "noData": "Sem dados para o filtro atual.",
+      "noOngoingData": "Nenhuma atividade em andamento no filtro atual.",
       "noCompletedData": "Nenhuma atividade concluída no filtro atual."
     }
   }
